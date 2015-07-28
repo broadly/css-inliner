@@ -1,0 +1,22 @@
+{
+  "name": "css-linter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "dependencies": {
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/broadly/css-linter.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/broadly/css-linter/issues"
+  },
+  "homepage": "https://github.com/broadly/css-linter#readme"
+}
