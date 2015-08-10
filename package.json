@@ -4,8 +4,13 @@
   "description": "",
   "main": "lib/index.js",
   "dependencies": {
+    "bluebird": "^2.9.34",
+    "postcss": "^4.1.16",
+    "request": "^2.60.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  },
   "scripts": {
     "test": "mocha"
   },
