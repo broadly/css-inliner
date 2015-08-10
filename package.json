@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "lib/index.js",
+  "engines": {
+    "iojs": ">= 2.5.0"
+  },
   "dependencies": {
     "bluebird": "^2.9.34",
     "postcss": "^4.1.16",
