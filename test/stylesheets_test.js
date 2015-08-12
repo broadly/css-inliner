@@ -123,19 +123,9 @@ describe('URL resolver', function() {
 
 describe('Stylesheets', function() {
 
-  describe('with base URL', function() {
-
-    const stylesheets = new Stylesheets({ baseURL: 'http://example.com/headset' });
-
-    it('should load stylesheets from base directory', function() {
-      assert.equal(stylesheets.resolve('left'), 'http://example.com/headset/left');
-    });
-
-  });
-
   describe('with base directory', function() {
 
-    const stylesheets = new Stylesheets({ baseDir: '/home/headset' });
+    const stylesheets = new Stylesheets({ directory: '/home/headset' });
 
     it('should load stylesheets from base directory', function() {
       assert.equal(stylesheets.resolve('left'), '/home/headset/left');
@@ -157,12 +147,14 @@ describe('Stylesheets', function() {
 
   });
 
-  describe('with default option', function() {
+  describe('with default options', function() {
 
     const stylesheets = new Stylesheets();
 
-    it('should load stylesheets from base directory', function() {
-      assert.equal(stylesheets.resolve('left'), `${process.cwd()}/left`);
+    it('should fail to resolve external stylesheets', function() {
+      assert.throws(function() {
+        stylesheets.resolve('left');
+      });
     });
 
   });
@@ -217,12 +209,12 @@ describe('Stylesheets cache', function() {
 
 describe('Stylesheets load', function() {
 
-  const stylesheets = new Stylesheets();
+  const stylesheets = new Stylesheets({ directory: 'test' });
   const results     = [];
 
   function cacheCSS() {
     return stylesheets
-      .load('test/blue_body.css')
+      .load('blue_body.css')
       .then(function(result) {
         results.push(result);
       });

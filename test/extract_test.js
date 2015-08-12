@@ -33,15 +33,14 @@ describe('Extract stylesheets', function() {
     <!-- not extracted -->
     <link rel="stylesheet" href="http://example.com/external.css">
   </head>
-</html>
-  `;
+</html>`;
 
   let finalDOM;
   let inline;
   let preserve;
 
   before(function() {
-    const stylesheets = new Stylesheets({ baseDir: __dirname });
+    const stylesheets = new Stylesheets({ directory: 'test' });
     return parseHTMLAsync(HTML)
       .then(function(dom) {
         return extractAsync(dom, stylesheets);
@@ -167,7 +166,7 @@ describe('Missing external stylesheet', function() {
   let loadError;
 
   before(function() {
-    const stylesheets = new Stylesheets({ baseDir: __dirname });
+    const stylesheets = new Stylesheets({ directory: 'test' });
     return parseHTMLAsync(HTML)
       .then(function(dom) {
         return extractAsync(dom, stylesheets);
