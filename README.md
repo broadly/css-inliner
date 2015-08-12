@@ -43,3 +43,31 @@ external stylesheets.  However, it can still process `style` elements appearing
 in the document.
 
 
+## Inlining
+
+This will extract any `style` elements included in the document, and all their
+rules.  It will also extract any external stylesheets that use relative URLs.
+These stylesheets will be loaded from the cache.
+
+Both elements are then removed from the DOM.
+
+External stylesheets that reference absolute URLs (anything with a host) are
+retained as is.  These are expected to be resolved when the document is
+rendered in the browser.
+
+Styles are processed in document order, i.e. the order in which the `style`
+element appears or style references are linked to in the document.
+
+Rules that can be applied to the `style` attribute of an element (inlined) are
+applied to any matching element (may be none) and discarded.
+
+Rules that cannot be applied are preserved and added back to the document inside
+a new `style` element.  Rules that cannot be inlined include pseudo selectors
+(e.g. `:hover`, `::after`) as well as all media queries (e.g. `@media print`).
+
+If a rule has multiple selectors, it may be inlined with one selector, and
+included in the document with another selector.
+
+
+
+

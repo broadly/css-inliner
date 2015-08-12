@@ -11,6 +11,7 @@
     "css-select": "^1.1.0",
     "domutils": "^1.5.1",
     "htmlparser2": "^3.8.3",
+    "lodash": "^3.10.1",
     "postcss": "^4.1.16",
     "postcss-selector-parser": "^1.1.2",
     "request": "^2.60.0"
