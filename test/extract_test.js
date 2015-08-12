@@ -1,9 +1,9 @@
 'use strict';
-const assert          = require('assert');
-const CSSselect       = require('css-select');
-const extractAsync    = require('../lib/extract_stylesheets');
-const parseHTMLAsync  = require('../lib/parse_html');
-const Stylesheets     = require('../lib/stylesheets');
+const assert        = require('assert');
+const CSSselect     = require('css-select');
+const extractAsync  = require('../lib/extract_stylesheets');
+const parseHTML     = require('../lib/parse_html');
+const Stylesheets   = require('../lib/stylesheets');
 
 
 // [ Rule ] -> [ string ]
@@ -41,10 +41,8 @@ describe('Extract stylesheets', function() {
 
   before(function() {
     const stylesheets = new Stylesheets({ directory: 'test' });
-    return parseHTMLAsync(HTML)
-      .then(function(dom) {
-        return extractAsync(dom, stylesheets);
-      })
+    const dom         = parseHTML(HTML);
+    return extractAsync(dom, stylesheets)
       .then(function(result) {
         finalDOM  = result.dom;
         inline    = result.inline;
@@ -129,10 +127,8 @@ describe('Invalid CSS', function() {
 
   before(function() {
     const stylesheets = new Stylesheets();
-    return parseHTMLAsync(HTML)
-      .then(function(dom) {
-        return extractAsync(dom, stylesheets);
-      })
+    const dom         = parseHTML(HTML);
+    return extractAsync(dom, stylesheets)
       .catch(function(error) {
         parseError = error;
       });
@@ -167,10 +163,8 @@ describe('Missing external stylesheet', function() {
 
   before(function() {
     const stylesheets = new Stylesheets({ directory: 'test' });
-    return parseHTMLAsync(HTML)
-      .then(function(dom) {
-        return extractAsync(dom, stylesheets);
-      })
+    const dom         = parseHTML(HTML);
+    return extractAsync(dom, stylesheets)
       .catch(function(error) {
         loadError = error;
       });
