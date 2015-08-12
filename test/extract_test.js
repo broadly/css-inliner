@@ -1,7 +1,7 @@
 'use strict';
 const assert        = require('assert');
 const CSSselect     = require('css-select');
-const extractAsync  = require('../lib/extract_stylesheets');
+const extractAsync  = require('../lib/extract_styles');
 const parseHTML     = require('../lib/parse_html');
 const Stylesheets   = require('../lib/stylesheets');
 
@@ -37,7 +37,7 @@ describe('Extract stylesheets', function() {
 
   let finalDOM;
   let inline;
-  let preserve;
+  let include;
 
   before(function() {
     const stylesheets = new Stylesheets({ directory: 'test' });
@@ -46,7 +46,7 @@ describe('Extract stylesheets', function() {
       .then(function(result) {
         finalDOM  = result.dom;
         inline    = result.inline;
-        preserve  = result.preserve;
+        include   = result.include;
       });
   });
 
@@ -66,44 +66,44 @@ describe('Extract stylesheets', function() {
     assert.equal(inline.length, 3);
   });
 
-  it('should collect inline rules with static selector', function() {
+  it('should collect inlining rules with static selector', function() {
     const names = ruleNames(inline);
     assert(~names.indexOf('h2'));
     assert(~names.indexOf('h3'));
   });
 
-  it('should not collect inline rules with dynamic selector', function() {
+  it('should not collect inlining rules with dynamic selector', function() {
     const names = ruleNames(inline);
     assert(names.indexOf('h2:hover') < 0);
   });
 
-  it('should collect inline rules in document order', function() {
+  it('should collect inlining rules in document order', function() {
     const names = ruleNames( inline.slice(2) );
     assert.equal(names, 'body');
   });
 
-  it('should collect inline rules in stylesheet order', function() {
+  it('should collect inlining rules in stylesheet order', function() {
     const names = ruleNames( inline.slice(0, 2) );
     assert.deepEqual(names, [ 'h2', 'h3' ]);
   });
 
-  it('should collect preserve rules with dynamic selector', function() {
-    const names = ruleNames(preserve);
+  it('should collect included rules with dynamic selector', function() {
+    const names = ruleNames(include);
     assert(~names.indexOf('h2:hover'));
   });
 
-  it('should collect preserve rules with media queries', function() {
-    const names = ruleNames(preserve);
+  it('should collect included rules with media queries', function() {
+    const names = ruleNames(include);
     assert(~names.indexOf('@media'));
   });
 
-  it('should not collect preserve rules with static selector', function() {
-    const names = ruleNames(preserve);
+  it('should not collect included rules with static selector', function() {
+    const names = ruleNames(include);
     assert(names.indexOf('h2') < 0);
   });
 
-  it('should collect preserved rules in stylesheet order', function() {
-    const names = ruleNames(preserve);
+  it('should collect included rules in stylesheet order', function() {
+    const names = ruleNames(include);
     assert.deepEqual(names, [ '@media', 'h2:hover' ]);
   });
 

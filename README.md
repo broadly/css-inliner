@@ -66,7 +66,7 @@ Rules that can be applied to the `style` attribute of an element (inlined), are
 applied to any matching element found in the document, if there is one.  They
 are always discarded.
 
-Rules that cannot be applied, are preserved and added back to the document
+Rules that cannot be applied, are kept as is, and added back to the document
 inside a new `style` elements.  These become accessible to browsers or email
 clients that refuse to load external stylesheets, but will still process `style`
 elements included in the document (e.g. GMail).
