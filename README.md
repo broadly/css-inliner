@@ -43,31 +43,40 @@ external stylesheets.  However, it can still process `style` elements appearing
 in the document.
 
 
-## Inlining
+## How It Works
 
-This will extract any `style` elements included in the document, and all their
-rules.  It will also extract any external stylesheets that use relative URLs.
-These stylesheets will be loaded from the cache.
+The inliner extracts any `style` elements appearing in the document, with all
+their rules.  It also extracts any external stylesheets that use relative URLs.
+Both stylesheets are processed using PostCSS and any plugins you opt to use, and
+cached in memory.
 
-Both elements are then removed from the DOM.
+The `style` element and `link` element to known stylesheet are then removed from
+the document.  These rules will be inlined or added back into the document
+later.
 
-External stylesheets that reference absolute URLs (anything with a host) are
-retained as is.  These are expected to be resolved when the document is
-rendered in the browser.
+External stylesheets that reference absolute URLs (anything with a hostname,
+such as `//example.com/`) are retained in the document.  These are expected to
+resolve when the document is rendered in the browser or email client.
 
-Styles are processed in document order, i.e. the order in which the `style`
-element appears or style references are linked to in the document.
+Styles are processed in document order, that is, the order in which the `style`
+or `link` elements appear in the document, such that the early rules take
+precedence (for the same specificity).
 
-Rules that can be applied to the `style` attribute of an element (inlined) are
-applied to any matching element (may be none) and discarded.
+Rules that can be applied to the `style` attribute of an element (inlined), are
+applied to any matching element found in the document, if there is one.  They
+are always discarded.
 
-Rules that cannot be applied are preserved and added back to the document inside
-a new `style` element.  Rules that cannot be inlined include pseudo selectors
-(e.g. `:hover`, `::after`) as well as all media queries (e.g. `@media print`).
+Rules that cannot be applied, are preserved and added back to the document
+inside a new `style` elements.  These become accessible to browsers or email
+clients that refuse to load external stylesheets, but will still process `style`
+elements included in the document (e.g. GMail).
 
-If a rule has multiple selectors, it may be inlined with one selector, and
+Rules that cannot be inlined include pseudo selectors such as `:hover` and
+`::after`, as well as all media queries such as `@media screen`.  These can only
+be applied to a live document when rendered by a browser.
+
+If a rule has multiple selectors, it may be inlined using one selector, and
 included in the document with another selector.
-
 
 
 
