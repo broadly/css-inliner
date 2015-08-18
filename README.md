@@ -79,4 +79,11 @@ If a rule has multiple selectors, it may be inlined using one selector, and
 included in the document with another selector.
 
 
+## References
+
+[CSS 3: Calculating a selector's specificity](http://www.w3.org/TR/css3-selectors/#specificity)
+
+[PostCSS API](https://github.com/postcss/postcss/blob/master/docs/api.md)
+
+[PostCSS Selector Parser API](https://github.com/postcss/postcss-selector-parser/blob/master/API.md)
 

@@ -2,7 +2,7 @@
 const assert        = require('assert');
 const CSSselect     = require('css-select');
 const extractAsync  = require('../lib/extract_styles');
-const parseHTML     = require('../lib/parse_html');
+const CSSInliner    = require('../');
 const Stylesheets   = require('../lib/stylesheets');
 
 
@@ -41,12 +41,17 @@ describe('Extract stylesheets', function() {
 
   before(function() {
     const stylesheets = new Stylesheets({ directory: 'test' });
-    const dom         = parseHTML(HTML);
-    return extractAsync(dom, stylesheets)
-      .then(function(result) {
-        finalDOM  = result.dom;
-        inline    = result.inline;
-        include   = result.include;
+    return CSSInliner.parseHTML({ html: HTML })
+      .then(function(context) {
+        return context.dom;
+      })
+      .then(function(dom) {
+        return extractAsync(dom, stylesheets)
+          .then(function(result) {
+            finalDOM  = result.dom;
+            inline    = result.inline;
+            include   = result.include;
+          });
       });
   });
 
@@ -127,10 +132,15 @@ describe('Invalid CSS', function() {
 
   before(function() {
     const stylesheets = new Stylesheets();
-    const dom         = parseHTML(HTML);
-    return extractAsync(dom, stylesheets)
-      .catch(function(error) {
-        parseError = error;
+    return CSSInliner.parseHTML({ html: HTML })
+      .then(function(context) {
+        return context.dom;
+      })
+      .then(function(dom) {
+        return extractAsync(dom, stylesheets)
+          .catch(function(error) {
+            parseError = error;
+          });
       });
   });
 
@@ -163,10 +173,15 @@ describe('Missing external stylesheet', function() {
 
   before(function() {
     const stylesheets = new Stylesheets({ directory: 'test' });
-    const dom         = parseHTML(HTML);
-    return extractAsync(dom, stylesheets)
-      .catch(function(error) {
-        loadError = error;
+    return CSSInliner.parseHTML({ html: HTML })
+      .then(function(context) {
+        return context.dom;
+      })
+      .then(function(dom) {
+        return extractAsync(dom, stylesheets)
+          .catch(function(error) {
+            loadError = error;
+          });
       });
   });
 
