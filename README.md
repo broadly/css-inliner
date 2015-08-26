@@ -21,13 +21,12 @@ to keep it around, but it is useful to speed up processing.
 
 You configure the inliner with the following options:
 
-`directory` - This is the base directory that contains all external stylesheets
-that are available for use.
+`directory` - This is the base directory from which stylesheets are loaded.
 
 `plugins`   - Array of PostCSS plugins.
 
-`resolve`   - This is a function that loads an external stylesheet, if you want
-something other than setting a directory.
+`resolve`   - This is a function that resolves a stylesheet reference (path or
+URL) into the filename of the stylesheet to load.
 
 If the source document links to any external stylesheet with with a relative URL
 (path only), then the inliner will attempt to resolve this stylesheet using the

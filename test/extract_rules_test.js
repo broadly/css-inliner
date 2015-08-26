@@ -15,10 +15,7 @@ function ruleNames(rules) {
 }
 
 // /path -> __dirname/path
-function resolve(url) {
-  if (url.startsWith('/'))
-    return Path.join(__dirname, url);
-}
+const resolve = CSSInliner.fileResolver(__dirname);
 
 
 describe('Extract stylesheets', function() {
