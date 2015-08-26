@@ -4,7 +4,7 @@ const Cache         = require('../lib/cache');
 const CSSInliner    = require('../');
 const CSSselect     = require('css-select');
 const extractAsync  = require('../lib/extract_rules');
-const Path          = require('path');
+const fileResolver  = require('../lib/resolvers').fileResolver;
 
 
 // [ Rule ] -> [ string ]
@@ -15,7 +15,7 @@ function ruleNames(rules) {
 }
 
 // /path -> __dirname/path
-const resolve = CSSInliner.fileResolver(__dirname);
+const resolve = fileResolver(__dirname);
 
 
 describe('Extract stylesheets', function() {
