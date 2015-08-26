@@ -1,9 +1,10 @@
 'use strict';
 const assert        = require('assert');
-const CSSselect     = require('css-select');
-const extractAsync  = require('../lib/extract_styles');
+const Cache         = require('../lib/cache');
 const CSSInliner    = require('../');
-const Stylesheets   = require('../lib/stylesheets');
+const CSSselect     = require('css-select');
+const extractAsync  = require('../lib/extract_rules');
+const Path          = require('path');
 
 
 // [ Rule ] -> [ string ]
@@ -11,6 +12,12 @@ function ruleNames(rules) {
   return rules.map(function(rule) {
     return rule.name ? `@${rule.name}` : rule.selector;
   });
+}
+
+// /path -> __dirname/path
+function resolve(url) {
+  if (url.startsWith('/'))
+    return Path.join(__dirname, url);
 }
 
 
@@ -29,28 +36,26 @@ describe('Extract stylesheets', function() {
         text-decoration: underline;
       }
     </style>
-    <link rel="stylesheet" href="blue_body.css">
+    <link rel="stylesheet" href="/blue_body.css">
     <!-- not extracted -->
     <link rel="stylesheet" href="http://example.com/external.css">
   </head>
 </html>`;
 
   let finalDOM;
-  let inline;
-  let include;
+  let rules;
 
   before(function() {
-    const stylesheets = new Stylesheets({ directory: 'test' });
+    const cache = new Cache();
     return CSSInliner.parseHTML({ html: HTML })
       .then(function(context) {
         return context.dom;
       })
       .then(function(dom) {
-        return extractAsync(dom, stylesheets)
+        return extractAsync({ dom, cache, resolve })
           .then(function(result) {
             finalDOM  = result.dom;
-            inline    = result.inline;
-            include   = result.include;
+            rules     = result.rules;
           });
       });
   });
@@ -60,7 +65,7 @@ describe('Extract stylesheets', function() {
     assert.equal(styleElements.length, 0);
   });
 
-  it('should remove only external relative stylesheets', function() {
+  it('should remove only resolved relative stylesheets', function() {
     const styleElements = CSSselect.selectAll('link[rel~="stylesheet"]', finalDOM);
     assert.equal(styleElements.length, 1);
     const href = styleElements[0].attribs.href;
@@ -68,48 +73,13 @@ describe('Extract stylesheets', function() {
   });
 
   it('should collect all rules', function() {
-    assert.equal(inline.length, 3);
+    assert.equal(rules.length, 4);
   });
 
-  it('should collect inlining rules with static selector', function() {
-    const names = ruleNames(inline);
-    assert(~names.indexOf('h2'));
-    assert(~names.indexOf('h3'));
-  });
+  it('should collect rules in document order', function() {
 
-  it('should not collect inlining rules with dynamic selector', function() {
-    const names = ruleNames(inline);
-    assert(names.indexOf('h2:hover') < 0);
-  });
-
-  it('should collect inlining rules in document order', function() {
-    const names = ruleNames( inline.slice(2) );
-    assert.equal(names, 'body');
-  });
-
-  it('should collect inlining rules in stylesheet order', function() {
-    const names = ruleNames( inline.slice(0, 2) );
-    assert.deepEqual(names, [ 'h2', 'h3' ]);
-  });
-
-  it('should collect included rules with dynamic selector', function() {
-    const names = ruleNames(include);
-    assert(~names.indexOf('h2:hover'));
-  });
-
-  it('should collect included rules with media queries', function() {
-    const names = ruleNames(include);
-    assert(~names.indexOf('@media'));
-  });
-
-  it('should not collect included rules with static selector', function() {
-    const names = ruleNames(include);
-    assert(names.indexOf('h2') < 0);
-  });
-
-  it('should collect included rules in stylesheet order', function() {
-    const names = ruleNames(include);
-    assert.deepEqual(names, [ '@media', 'h2:hover' ]);
+    const names = ruleNames( rules );
+    assert.deepEqual(names, [ '@media', 'h2', 'h3, h2:hover', 'body' ]);
   });
 
 });
@@ -131,13 +101,13 @@ describe('Invalid CSS', function() {
   let parseError;
 
   before(function() {
-    const stylesheets = new Stylesheets();
+    const cache = new Cache();
     return CSSInliner.parseHTML({ html: HTML })
       .then(function(context) {
         return context.dom;
       })
       .then(function(dom) {
-        return extractAsync(dom, stylesheets)
+        return extractAsync({ dom, cache, resolve })
           .catch(function(error) {
             parseError = error;
           });
@@ -164,7 +134,7 @@ describe('Missing external stylesheet', function() {
   const HTML = `
 <html>
   <head>
-    <link rel="stylesheet" href="not_found">
+    <link rel="stylesheet" href="/not_found">
   </head>
 </html>
   `;
@@ -172,13 +142,13 @@ describe('Missing external stylesheet', function() {
   let loadError;
 
   before(function() {
-    const stylesheets = new Stylesheets({ directory: 'test' });
+    const cache = new Cache({ directory: 'test' });
     return CSSInliner.parseHTML({ html: HTML })
       .then(function(context) {
         return context.dom;
       })
       .then(function(dom) {
-        return extractAsync(dom, stylesheets)
+        return extractAsync({ dom, cache, resolve })
           .catch(function(error) {
             loadError = error;
           });
@@ -194,5 +164,4 @@ describe('Missing external stylesheet', function() {
   });
 
 });
-
 
