@@ -4,6 +4,7 @@
     es6:  true
   },
   // http://eslint.org/docs/rules/
+  extends: 'eslint:recommended',
   rules: {
     strict:               0,
     curly:                [1, 'multi'],
@@ -13,7 +14,6 @@
     no-multi-spaces:      0,
     no-underscore-dangle: [0],
     no-use-before-define: [1, 'nofunc'],
-    no-var:               2,
     key-spacing:          0
   }
 }
