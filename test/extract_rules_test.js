@@ -4,7 +4,7 @@ const Cache         = require('../lib/cache');
 const CSSInliner    = require('../');
 const CSSselect     = require('css-select');
 const extractAsync  = require('../lib/extract_rules');
-const fileResolver  = require('../lib/resolvers').fileResolver;
+const fileResolver  = require('../lib/file_resolver');
 
 
 // [ Rule ] -> [ string ]
@@ -139,7 +139,7 @@ describe('Missing external stylesheet', function() {
   let loadError;
 
   before(function() {
-    const cache = new Cache({ directory: 'test' });
+    const cache = new Cache();
     return CSSInliner.parseHTML({ html: HTML })
       .then(function(context) {
         return context.dom;

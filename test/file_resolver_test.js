@@ -1,10 +1,10 @@
 const assert        = require('assert');
-const fileResolver  = require('../lib/resolvers').fileResolver;
+const fileResolver  = require('../lib/file_resolver');
 
 
 describe('File resolver', function() {
 
-  const resolve       = fileResolver('/var/www');
+  const resolve = fileResolver('/var/www');
 
   it('should resolve /foo.css to dir/foo.css', function() {
     assert.equal( resolve('/foo.css'), '/var/www/foo.css');
