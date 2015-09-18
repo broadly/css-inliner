@@ -2,7 +2,6 @@
 const applyInline = require('../lib/apply_inline');
 const assert      = require('assert');
 const CSSselect   = require('css-select');
-const matchRule   = require('../lib/match_rule');
 const Cache       = require('../lib/cache');
 const parseHTML   = require('../lib/parse_html');
 
