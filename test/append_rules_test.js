@@ -8,12 +8,25 @@ const parseHTML   = require('../lib/parse_html');
 
 describe('Append rules', function() {
 
-  const css = `@media print { .footer { display: none; } }`;
+  const sourceCSS = `
+    @media print {
+      .footer {
+        display: none;
+      }
+    }
+
+    h1:hover,  h1:before  {
+      color : red ;
+      background: none ;
+    }
+  `;
+  const expectedCSS = `@media print{.footer{display:none}}h1:hover,h1:before{color:red;background:none}`;
+
   let   rules;
 
   before(function() {
     const cache = new Cache();
-    return cache.compile(css)
+    return cache.compile(sourceCSS)
       .then(function(result) {
         rules  = result.root.nodes;
       });
@@ -28,7 +41,7 @@ describe('Append rules', function() {
     });
 
     it('should append rules to beginning of head', function() {
-      const expected  = '<html><head><style>@media print { .footer { display: none; } }</style><title>Hello</title></head><body><h1>Some div</h1></body></html>';
+      const expected  = `<html><head><style>${expectedCSS}</style><title>Hello</title></head><body><h1>Some div</h1></body></html>`;
       const html = DOMUtils.getOuterHTML(dom);
       assert.equal(html, expected);
     });
@@ -43,7 +56,7 @@ describe('Append rules', function() {
     });
 
     it('should append rules to beginning of body', function() {
-      const expected  = '<body><style>@media print { .footer { display: none; } }</style><h1>Som div</h1></body>';
+      const expected  = `<body><style>${expectedCSS}</style><h1>Som div</h1></body>`;
       const html      = DOMUtils.getOuterHTML(dom);
       assert.equal(html, expected);
     });
@@ -58,7 +71,7 @@ describe('Append rules', function() {
     });
 
     it('should append rules to beginning of document', function() {
-      const expected  = '<style>@media print { .footer { display: none; } }</style><div>Some div</div>';
+      const expected  = `<style>${expectedCSS}</style><div>Some div</div>`;
       const html      = DOMUtils.getOuterHTML(dom);
       assert.equal(html, expected);
     });
