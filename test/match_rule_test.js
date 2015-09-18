@@ -8,12 +8,8 @@ const PostCSS     = require('postcss');
 describe('Rule matcher', function() {
 
   const rule    = PostCSS.rule({
-    selectors: [
-      'p',
-      '#foo',
-      'h1:hover'
-    ],
-    nodes:     [
+    selector: 'p, #foo, h1:hover',
+    nodes: [
       PostCSS.decl({ prop: 'color',   value: 'red' }),
       PostCSS.decl({ prop: 'border',  value: 'none', important: true })
     ]

@@ -5,6 +5,7 @@ const CSSInliner    = require('../');
 const CSSselect     = require('css-select');
 const extractAsync  = require('../lib/extract_rules');
 const fileResolver  = require('../lib/file_resolver');
+const parseHTML     = require('../lib/parse_html');
 
 
 // [ Rule ] -> [ string ]
@@ -20,7 +21,7 @@ const resolve = fileResolver(__dirname);
 
 describe('Extract stylesheets', function() {
 
-  const HTML = `
+  const dom = parseHTML(`
 <html>
   <head>
     <!-- extracted -->
@@ -37,33 +38,25 @@ describe('Extract stylesheets', function() {
     <!-- not extracted -->
     <link rel="stylesheet" href="http://example.com/external.css">
   </head>
-</html>`;
+</html>`);
 
-  let finalDOM;
   let rules;
 
   before(function() {
     const cache = new Cache();
-    return CSSInliner.parseHTML({ html: HTML })
-      .then(function(context) {
-        return context.dom;
-      })
-      .then(function(dom) {
-        return extractAsync({ dom, cache, resolve })
-          .then(function(result) {
-            finalDOM  = result.dom;
-            rules     = result.rules;
-          });
+    return extractAsync({ dom, cache, resolve })
+      .then(function(result) {
+        rules = result.rules;
       });
   });
 
   it('should remove all style elements', function() {
-    const styleElements = CSSselect.selectAll('style', finalDOM);
+    const styleElements = CSSselect.selectAll('style', dom);
     assert.equal(styleElements.length, 0);
   });
 
   it('should remove only resolved relative stylesheets', function() {
-    const styleElements = CSSselect.selectAll('link[rel~="stylesheet"]', finalDOM);
+    const styleElements = CSSselect.selectAll('link[rel~="stylesheet"]', dom);
     assert.equal(styleElements.length, 1);
     const href = styleElements[0].attribs.href;
     assert( href.startsWith('http://') );
@@ -84,7 +77,7 @@ describe('Extract stylesheets', function() {
 
 describe('Invalid CSS', function() {
 
-  const HTML = `
+  const dom = parseHTML(`
 <html>
   <head>
     <style>
@@ -93,21 +86,15 @@ describe('Invalid CSS', function() {
     </style>
   </head>
 </html>
-  `;
+  `);
 
   let parseError;
 
   before(function() {
     const cache = new Cache();
-    return CSSInliner.parseHTML({ html: HTML })
-      .then(function(context) {
-        return context.dom;
-      })
-      .then(function(dom) {
-        return extractAsync({ dom, cache, resolve })
-          .catch(function(error) {
-            parseError = error;
-          });
+    return extractAsync({ dom, cache, resolve })
+      .catch(function(error) {
+        parseError = error;
       });
   });
 
@@ -128,27 +115,21 @@ describe('Invalid CSS', function() {
 
 describe('Missing external stylesheet', function() {
 
-  const HTML = `
+  const dom = parseHTML(`
 <html>
   <head>
     <link rel="stylesheet" href="/not_found">
   </head>
 </html>
-  `;
+  `);
 
   let loadError;
 
   before(function() {
     const cache = new Cache();
-    return CSSInliner.parseHTML({ html: HTML })
-      .then(function(context) {
-        return context.dom;
-      })
-      .then(function(dom) {
-        return extractAsync({ dom, cache, resolve })
-          .catch(function(error) {
-            loadError = error;
-          });
+    return extractAsync({ dom, cache, resolve })
+      .catch(function(error) {
+        loadError = error;
       });
   });
 
