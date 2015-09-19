@@ -30,7 +30,7 @@ const cache = new Cache();
 function applyCSS(css, dom) {
   return cache.compile(css)
     .then(function(result) {
-      const rules  = result.root.nodes;
+      const rules  = result.rules;
       applyInline(dom, rules);
     });
 }

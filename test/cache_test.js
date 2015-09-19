@@ -17,13 +17,9 @@ describe('Compile CSS', function() {
       });
   });
 
-  it('should return the result', function() {
-    assert(results[0].root);
-  });
-
   it('should parse the CSS', function() {
-    const root = results[0].root;
-    const body = root.nodes[0];
+    const rules = results[0].rules;
+    const body  = rules.get(0);
     assert.equal(body.selector, 'body');
     const decl = body.nodes[0];
     assert.equal(decl.prop, 'color');
@@ -63,13 +59,9 @@ describe('Load and compile CSS', function() {
       });
   });
 
-  it('should return the result', function() {
-    assert(results[0].root);
-  });
-
   it('should parse the CSS', function() {
-    const root = results[0].root;
-    const body = root.nodes[0];
+    const rules = results[0].rules;
+    const body  = rules.get(0);
     assert.equal(body.selector, 'body');
     const decl = body.nodes[0];
     assert.equal(decl.prop, 'color');

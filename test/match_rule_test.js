@@ -27,20 +27,20 @@ describe('Rule matcher', function() {
 
     it('should return all properties', function() {
       const properties = match(element);
-      assert.equal(properties[0].name, 'color');
-      assert.equal(properties[1].name, 'border');
+      assert.equal(properties.get(0).name, 'color');
+      assert.equal(properties.get(1).name, 'border');
     });
 
     it('should return all properties with their values', function() {
       const properties = match(element);
-      assert.equal(properties[0].value, 'red');
-      assert.equal(properties[1].value, 'none');
+      assert.equal(properties.get(0).value, 'red');
+      assert.equal(properties.get(1).value, 'none');
     });
 
     it('should return all properties with their important flag', function() {
       const properties = match(element);
-      assert.equal(properties[0].important, false);
-      assert.equal(properties[1].important, true);
+      assert.equal(properties.get(0).important, false);
+      assert.equal(properties.get(1).important, true);
     });
 
     it('should return properties with specificity 001', function() {
@@ -62,8 +62,8 @@ describe('Rule matcher', function() {
 
     it('should return all properties', function() {
       const properties = match(element);
-      assert.equal(properties[0].name, 'color');
-      assert.equal(properties[1].name, 'border');
+      assert.equal(properties.get(0).name, 'color');
+      assert.equal(properties.get(1).name, 'border');
     });
 
     it('should return properties with specificity 100', function() {
@@ -84,8 +84,8 @@ describe('Rule matcher', function() {
 
     it('should return all properties', function() {
       const properties = match(element);
-      assert.equal(properties[0].name, 'color');
-      assert.equal(properties[1].name, 'border');
+      assert.equal(properties.get(0).name, 'color');
+      assert.equal(properties.get(1).name, 'border');
     });
 
     it('should return properties with highest specificity (100)', function() {

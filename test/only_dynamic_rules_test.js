@@ -32,8 +32,7 @@ describe('Dynamic rules', function() {
     const cache = new Cache();
     return cache.compile(css)
       .then(function(result) {
-        const allRules  = result.root.nodes;
-        rules           = onlyDynamicRules(allRules);
+        rules = onlyDynamicRules(result.rules);
       });
   });
 
@@ -41,54 +40,59 @@ describe('Dynamic rules', function() {
     const media = rules
       .filter(rule => rule.type === 'atrule')
       .filter(rule => rule.name === 'media');
-    assert.equal(media.length, 2);
-    assert.equal(media[0].params, 'screen and (max-width: 300px)');
-    assert.equal(media[1].params, 'print');
+    assert.equal(media.size, 2);
+    assert.equal(media.get(0).params, 'screen and (max-width: 300px)');
+    assert.equal(media.get(1).params, 'print');
   });
 
   it('should include font faces', function() {
     const fontFace = rules
       .filter(rule => rule.type === 'atrule')
       .filter(rule => rule.name === 'font-face');
-    assert.equal(fontFace.length, 1);
-    assert.equal(fontFace[0].nodes[0].toString(), 'font-family: "Bitstream Vera Serif Bold"');
+    assert.equal(fontFace.size, 1);
+    const fontFamily = fontFace.get(0).nodes[0].toString();
+    assert.equal(fontFamily, 'font-family: "Bitstream Vera Serif Bold"');
   });
 
   it('should include rules with pseudo selectors', function() {
     const pseudo = rules
       .filter(rule => rule.type === 'rule')
       .filter(rule => /:/.test(rule.selectors) );
-    assert.equal(pseudo.length, 1);
-    assert.equal(pseudo[0].nodes, 'color: red');
+    assert.equal(pseudo.size, 1);
+    const declarations = pseudo.get(0).nodes;
+    assert.equal(declarations, 'color: red');
   });
 
   it('should include only the pseudo selector', function() {
     const pseudo = rules
       .filter(rule => rule.type === 'rule')
       .filter(rule => /:/.test(rule.selectors) );
-    assert.equal(pseudo[0].selector, 'h1:hover');
+    const selector = pseudo.get(0).selector;
+    assert.equal(selector, 'h1:hover');
   });
 
   it('should include rules with attribute selectors', function() {
     const attribute = rules
       .filter(rule => rule.type === 'rule')
       .filter(rule => /\[/.test(rule.selectors) );
-    assert.equal(attribute.length, 1);
-    assert.equal(attribute[0].nodes, 'color: green');
+    assert.equal(attribute.size, 1);
+    const declarations = attribute.get(0).nodes;
+    assert.equal(declarations, 'color: green');
   });
 
   it('should include only the attribute selectors', function() {
     const attribute = rules
       .filter(rule => rule.type === 'rule')
       .filter(rule => /\[/.test(rule.selectors) );
-    assert.equal(attribute[0].selector, '[name=foo]');
+    const selector = attribute.get(0).selector;
+    assert.equal(selector, '[name=foo]');
   });
 
   it('should not include rules without dynamic selectors', function() {
     const notDynamic = rules
       .filter(rule => rule.type === 'rule')
       .filter(rule => !/[:[]/.test(rule.selectors) );
-    assert.equal(notDynamic.length, 0);
+    assert.equal(notDynamic.size, 0);
   });
 
 });

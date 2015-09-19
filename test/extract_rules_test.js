@@ -1,7 +1,6 @@
 'use strict';
 const assert        = require('assert');
 const Cache         = require('../lib/cache');
-const CSSInliner    = require('../');
 const CSSselect     = require('css-select');
 const extractAsync  = require('../lib/extract_rules');
 const fileResolver  = require('../lib/file_resolver');
@@ -63,13 +62,13 @@ describe('Extract stylesheets', function() {
   });
 
   it('should collect all rules', function() {
-    assert.equal(rules.length, 4);
+    assert.equal(rules.size, 4);
   });
 
   it('should collect rules in document order', function() {
 
     const names = ruleNames( rules );
-    assert.deepEqual(names, [ '@media', 'h2', 'h3, h2:hover', 'body' ]);
+    assert.deepEqual(names.toArray(), [ '@media', 'h2', 'h3, h2:hover', 'body' ]);
   });
 
 });

@@ -28,7 +28,7 @@ describe('Append rules', function() {
     const cache = new Cache();
     return cache.compile(sourceCSS)
       .then(function(result) {
-        rules  = result.root.nodes;
+        rules  = result.rules;
       });
   });
 

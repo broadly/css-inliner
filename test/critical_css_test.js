@@ -34,19 +34,7 @@ const SOURCE = `
 
 const EXPECTED = `
 <html>
-  <head><style>body {
-      font:  Helvetica;
-    };@media screen {
-      body {
-        font-size: 12pt;
-      }
-    };body, h1 {
-      font-weight: bold;
-    };h1:hover {
-      text-decoration: underline;
-    };body {
-      color: blue;
-    }</style>
+  <head><style>body{font:Helvetica}@media screen{body{font-size:12pt}}body,h1{font-weight:bold}h1:hover{text-decoration:underline}body{color:blue}</style>
     <title>Hello World!</title>
     <link rel="stylesheet" href="http://example.com/style.css">
   </head>
@@ -75,17 +63,17 @@ describe('Critical CSS', function() {
   });
 
   it('should include media query in critical CSS', function() {
-    const regexp = /<head><style>(.|\n)*@media screen\s+{\s+body\s+{/;
+    const regexp = /<head><style>(.|\n)*@media screen{body{/;
     assert( regexp.test(result) );
   });
 
   it('should include pseudo element selectors in critical CSS', function() {
-    const regexp = /<head><style>(.|\n)*h1:hover\s+{\s+text-decoration/;
+    const regexp = /<head><style>(.|\n)*h1:hover{text-decoration/;
     assert( regexp.test(result) );
   });
 
   it('should include regular selectors in critical CSS', function() {
-    const regexp = /<head><style>(.|\n)*h1\s+{\s+font-weight/;
+    const regexp = /<head><style>(.|\n)*h1{font-weight/;
     assert( regexp.test(result) );
   });
 
