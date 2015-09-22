@@ -8,18 +8,18 @@
   },
   "dependencies": {
     "@broadly/htmlparser2": "^3.9.0",
-    "bluebird": "^2.10.0",
+    "bluebird": "^2.10.1",
     "css-select": "^1.1.0",
     "debug": "^2.2.0",
     "domelementtype": "^1.3.0",
     "domutils": "^1.5.1",
     "immutable": "^3.7.5",
-    "postcss": "^5.0.5",
+    "postcss": "^5.0.6",
     "postcss-selector-parser": "^1.2.0",
-    "request": "^2.62.0"
+    "request": "^2.63.0"
   },
   "devDependencies": {
-    "mocha": "^2.3.2"
+    "mocha": "^2.3.3"
   },
   "scripts": {
     "test": "mocha"
