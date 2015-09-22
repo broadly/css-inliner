@@ -1,0 +1,24 @@
+/* Used by inline.html */
+* {
+  font-family: 'Helvetica' !important;
+};
+h1 {
+  font-size: 64pt;
+}
+h1 + p {
+  font-size: 14pt;
+}
+p {
+  font-size: 12pt;
+}
+/* Fancy color hover effect */
+p:hover {
+  color: blue;
+}
+
+@media print {
+  /* Make sure it pops off the page! */
+  h1 {
+    font-weight: bolder;
+  }
+}
