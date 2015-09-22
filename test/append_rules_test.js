@@ -2,6 +2,7 @@
 const appendRules = require('../lib/append_rules');
 const assert      = require('assert');
 const Cache       = require('../lib/cache');
+const Context     = require('../lib/context');
 const DOMUtils    = require('domutils');
 const parseHTML   = require('../lib/parse_html');
 
@@ -30,12 +31,17 @@ h1:hover,  h1:before  {
       });
   });
 
+
   describe('to document with head', function() {
 
-    const dom = parseHTML('<html><head><title>Hello</title></head><body><h1>Some div</h1></body></html>');
+    const html = '<html><head><title>Hello</title></head><body><h1>Some div</h1></body></html>';
+    let   dom;
 
     before(function() {
-      appendRules({ dom, rules });
+      const initial = new Context({ html, rules });
+      const parsed  = parseHTML(initial);
+      appendRules(parsed);
+      dom = parsed.dom;
     });
 
     it('should append rules to beginning of head', function() {
@@ -45,12 +51,17 @@ h1:hover,  h1:before  {
     });
   });
 
+
   describe('to document with body and no head', function() {
 
-    const dom = parseHTML('<body><h1>Som div</h1></body>');
+    const html    = '<body><h1>Som div</h1></body>';
+    let   dom;
 
     before(function() {
-      appendRules({ dom, rules });
+      const initial = new Context({ html, rules });
+      const parsed  = parseHTML(initial);
+      appendRules(parsed);
+      dom = parsed.dom;
     });
 
     it('should append rules to beginning of body', function() {
@@ -60,12 +71,17 @@ h1:hover,  h1:before  {
     });
   });
 
+
   describe('to document with no body or head', function() {
 
-    const dom = parseHTML('<div>Some div</div>');
+    const html    = '<div>Some div</div>';
+    let   dom;
 
     before(function() {
-      appendRules({ dom, rules });
+      const initial = new Context({ html, rules });
+      const parsed  = parseHTML(initial);
+      appendRules(parsed);
+      dom = parsed.dom;
     });
 
     it('should append rules to beginning of document', function() {

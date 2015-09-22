@@ -3,6 +3,7 @@ const applyInline = require('../lib/apply_inline');
 const assert      = require('assert');
 const CSSselect   = require('css-select');
 const Cache       = require('../lib/cache');
+const Context     = require('../lib/context');
 const parseHTML   = require('../lib/parse_html');
 
 
@@ -22,240 +23,277 @@ function parseStyle(element) {
 }
 
 
-const cache = new Cache();
+describe('Apply inline', function() {
 
-// Parses CSS stylesheet, applies to DOM, returns promise.
-//
-// (css, dom) -> promise()
-function applyCSS(css, dom) {
-  return cache.compile(css)
-    .then(function(result) {
-      const rules  = result.rules;
-      applyInline(dom, rules);
+  // Parses CSS stylesheet, applies to DOM, returns promise.
+  //
+  // (css, dom) -> promise()
+  function applyCSS(html, css) {
+    const cache   = new Cache();
+    const context = new Context({ html });
+    const parsed  = parseHTML(context);
+    return cache.compile(css)
+      .then(function(result) {
+        const withRules = parsed.set('rules', result.rules);
+        applyInline(withRules);
+        return withRules.dom;
+      });
+  }
+
+
+  describe('Element with matching rule', function() {
+
+    const css = `
+      p {
+        color: red;
+        border: 1px solid blue;
+        outline: none !important;
+      }
+    `;
+
+    describe('no inline properties', function() {
+
+      const html = `
+        <html>
+          <body>
+            <p>This has no inline properties</p>
+          </body>
+        </html>
+      `;
+
+      let dom;
+
+      before(function() {
+        return applyCSS(html, css)
+          .then(function(result) {
+            dom = result;
+          });
+      });
+
+      it('should set style attribute', function() {
+        const p = CSSselect.selectOne('p', dom);
+        assert(p.attribs.style);
+      });
+
+      it('should add styles from rule', function() {
+        const p           = CSSselect.selectOne('p', dom);
+        const properties  = parseStyle(p);
+        assert.equal(properties.color, 'red');
+        assert.equal(properties.border, '1px solid blue');
+        assert.equal(properties.outline, 'none');
+      });
+
     });
-}
 
 
-describe('Element with matching rule', function() {
+    describe('with inline properties', function() {
 
-  const css = `
-    p {
-      color: red;
-      border: 1px solid blue;
-      outline: none !important;
-    }
-  `;
+      const html = `
+        <html>
+          <body>
+            <p style="color:green;font:courier;outline:1px dashed blue">This has inline properties</p>
+          </body>
+        </html>
+      `;
 
-  describe('no inline properties', function() {
+      let dom;
 
-    const dom = parseHTML(`
+      before(function() {
+        return applyCSS(html, css)
+          .then(function(result) {
+            dom = result;
+          });
+      });
+
+      it('should preserve inline styles', function() {
+        const p           = CSSselect.selectOne('p', dom);
+        const properties  = parseStyle(p);
+        assert.equal(properties.font, 'courier');
+      });
+
+      it('should keep inline styles (higher specificity)', function() {
+        const p           = CSSselect.selectOne('p', dom);
+        const properties  = parseStyle(p);
+        assert.equal(properties.color, 'green');
+      });
+
+      it('should add styles from rule', function() {
+        const p           = CSSselect.selectOne('p', dom);
+        const properties  = parseStyle(p);
+        assert.equal(properties.border, '1px solid blue');
+      });
+
+      it('should add styles from rule (if important)', function() {
+        const p           = CSSselect.selectOne('p', dom);
+        const properties  = parseStyle(p);
+        assert.equal(properties.outline, 'none');
+      });
+
+    });
+
+
+  });
+
+
+  describe('Element with several matching rule', function() {
+
+    const css = `
+      p#foo {
+        color: red;
+      }
+      p {
+        color: blue;            /* ignored, previous rule has higher specificity */
+        border: 1px solid blue; /* ignored, next rule takes precedence */
+      }
+      p {
+        border: 1px solid red;
+      }
+    `;
+
+    const html = `
       <html>
         <body>
-          <p>This has no inline properties</p>
+          <p id="foo">This has border</p>
         </body>
       </html>
-    `);
+    `;
+
+    let dom;
 
     before(function() {
-      return applyCSS(css, dom);
+      return applyCSS(html, css)
+        .then(function(result) {
+          dom = result;
+        });
     });
 
-    it('should set style attribute', function() {
-      const p = CSSselect.selectOne('p', dom);
-      assert(p.attribs.style);
-    });
-
-    it('should add styles from rule', function() {
+    it('should pick property with highest specificity', function() {
       const p           = CSSselect.selectOne('p', dom);
       const properties  = parseStyle(p);
       assert.equal(properties.color, 'red');
-      assert.equal(properties.border, '1px solid blue');
-      assert.equal(properties.outline, 'none');
+    });
+
+    it('should pick later of two properties with same specificity', function() {
+      const p           = CSSselect.selectOne('p', dom);
+      const properties  = parseStyle(p);
+      assert.equal(properties.border, '1px solid red');
     });
 
   });
 
 
-  describe('with inline properties', function() {
+  describe('Element with no matching rule', function() {
 
-    const dom = parseHTML(`
+    const css = `p.foo { color: red; }`;
+
+    describe('no inline properties', function() {
+
+      const html = `
       <html>
         <body>
-          <p style="color:green;font:courier;outline:1px dashed blue">This has inline properties</p>
+          <p>This is unstyled</p>
         </body>
       </html>
-    `);
+      `;
 
-    before(function() {
-      return applyCSS(css, dom);
+      let dom;
+
+      before(function() {
+        return applyCSS(html, css)
+          .then(function(result) {
+            dom = result;
+          });
+      });
+
+      it('should not set style attribute', function() {
+        const p = CSSselect.selectOne('p', dom);
+        assert.equal(p.attribs.style, undefined);
+      });
+
     });
 
-    it('should preserve inline styles', function() {
-      const p           = CSSselect.selectOne('p', dom);
-      const properties  = parseStyle(p);
-      assert.equal(properties.font, 'courier');
-    });
 
-    it('should keep inline styles (higher specificity)', function() {
-      const p           = CSSselect.selectOne('p', dom);
-      const properties  = parseStyle(p);
-      assert.equal(properties.color, 'green');
-    });
+    describe('with inline properties', function() {
 
-    it('should add styles from rule', function() {
-      const p           = CSSselect.selectOne('p', dom);
-      const properties  = parseStyle(p);
-      assert.equal(properties.border, '1px solid blue');
-    });
+      const html = `
+      <html>
+        <body>
+          <p style="color:green">This is green</p>
+        </body>
+      </html>
+      `;
 
-    it('should add styles from rule (if important)', function() {
-      const p           = CSSselect.selectOne('p', dom);
-      const properties  = parseStyle(p);
-      assert.equal(properties.outline, 'none');
+      let dom;
+
+      before(function() {
+        return applyCSS(html, css)
+          .then(function(result) {
+            dom = result;
+          });
+      });
+
+      it('should preserve inline styles', function() {
+        const p          = CSSselect.selectOne('p', dom);
+        const properties = parseStyle(p);
+        assert.equal(properties.color, 'green');
+      });
+
+      it('should not add new inline styles', function() {
+        const p          = CSSselect.selectOne('p', dom);
+        const properties = parseStyle(p);
+        assert.equal(Object.keys(properties).length, 1);
+      });
+
     });
 
   });
 
 
-});
+  describe('Element tree', function() {
 
-
-describe('Element with several matching rule', function() {
-
-  const css = `
-    p#foo {
-      color: red;
-    }
-    p {
-      color: blue;            /* ignored, previous rule has higher specificity */
-      border: 1px solid blue; /* ignored, next rule takes precedence */
-    }
-    p {
-      border: 1px solid red;
-    }
-  `;
-
-  const dom = parseHTML(`
+    const css   = `
+      body { color: red; }
+      body h1 { text-decoration: underline; }
+      body > p { font-size: 1.2em; }
+    `;
+    const html  = `
     <html>
       <body>
-        <p id="foo">This has border</p>
+        <h1>Hello</h1>
+        <p>Nice to meet you</p>
       </body>
     </html>
-  `);
+    `;
 
-  before(function() {
-    return applyCSS(css, dom);
-  });
-
-  it('should pick property with highest specificity', function() {
-    const p           = CSSselect.selectOne('p', dom);
-    const properties  = parseStyle(p);
-    assert.equal(properties.color, 'red');
-  });
-
-  it('should pick later of two properties with same specificity', function() {
-    const p           = CSSselect.selectOne('p', dom);
-    const properties  = parseStyle(p);
-    assert.equal(properties.border, '1px solid red');
-  });
-
-});
-
-
-describe('Element with no matching rule', function() {
-
-  const css = `p.foo { color: red; }`;
-
-  describe('no inline properties', function() {
-
-    const dom = parseHTML(`
-    <html>
-      <body>
-        <p>This is unstyled</p>
-      </body>
-    </html>
-    `);
+    let dom;
 
     before(function() {
-      return applyCSS(css, dom);
+      return applyCSS(html, css)
+        .then(function(result) {
+          dom = result;
+        });
     });
 
-    it('should not set style attribute', function() {
-      const p = CSSselect.selectOne('p', dom);
-      assert.equal(p.attribs.style, undefined);
+    it('should apply style to div element', function() {
+      const body       = CSSselect.selectOne('body', dom);
+      const properties = parseStyle(body);
+      assert.equal(properties.color, 'red');
     });
 
-  });
-
-
-  describe('with inline properties', function() {
-
-    const dom = parseHTML(`
-    <html>
-      <body>
-        <p style="color:green">This is green</p>
-      </body>
-    </html>
-    `);
-
-    before(function() {
-      return applyCSS(css, dom);
+    it('should apply style to h1 element', function() {
+      const h1         = CSSselect.selectOne('h1', dom);
+      const properties = parseStyle(h1);
+      assert.equal(properties.textDecoration, 'underline');
     });
 
-    it('should preserve inline styles', function() {
+    it('should apply style to p element', function() {
       const p          = CSSselect.selectOne('p', dom);
       const properties = parseStyle(p);
-      assert.equal(properties.color, 'green');
-    });
-
-    it('should not add new inline styles', function() {
-      const p          = CSSselect.selectOne('p', dom);
-      const properties = parseStyle(p);
-      assert.equal(Object.keys(properties).length, 1);
+      assert.equal(properties.fontSize, '1.2em');
     });
 
   });
 
-});
-
-
-describe('Element tree', function() {
-
-  const css   = `
-    body { color: red; }
-    body h1 { text-decoration: underline; }
-    body > p { font-size: 1.2em; }
-  `;
-  const dom  = parseHTML(`
-  <html>
-    <body>
-      <h1>Hello</h1>
-      <p>Nice to meet you</p>
-    </body>
-  </html>
-  `);
-
-  before(function() {
-    return applyCSS(css, dom);
-  });
-
-  it('should apply style to div element', function() {
-    const body       = CSSselect.selectOne('body', dom);
-    const properties = parseStyle(body);
-    assert.equal(properties.color, 'red');
-  });
-
-  it('should apply style to h1 element', function() {
-    const h1         = CSSselect.selectOne('h1', dom);
-    const properties = parseStyle(h1);
-    assert.equal(properties.textDecoration, 'underline');
-  });
-
-  it('should apply style to p element', function() {
-    const p          = CSSselect.selectOne('p', dom);
-    const properties = parseStyle(p);
-    assert.equal(properties.fontSize, '1.2em');
-  });
 
 });
 

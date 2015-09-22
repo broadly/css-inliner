@@ -1,6 +1,7 @@
 'use strict';
 const assert            = require('assert');
 const Cache             = require('../lib/cache');
+const Context           = require('../lib/context');
 const onlyDynamicRules  = require('../lib/only_dynamic_rules');
 
 
@@ -32,7 +33,8 @@ describe('Dynamic rules', function() {
     const cache = new Cache();
     return cache.compile(css)
       .then(function(result) {
-        rules = onlyDynamicRules(result.rules);
+        const context = new Context(result);
+        rules = onlyDynamicRules(context).rules;
       });
   });
 
