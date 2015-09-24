@@ -4,7 +4,6 @@ const Cache         = require('../lib/cache');
 const Context       = require('../lib/context');
 const CSSselect     = require('css-select');
 const extractRules  = require('../lib/extract_rules');
-const fileResolver  = require('../lib/file_resolver');
 const parseHTML     = require('../lib/parse_html');
 
 
@@ -18,11 +17,7 @@ function ruleNames(rules) {
 
 describe('Extract stylesheets', function() {
 
-  const cache   = new Cache();
-
-  // /path -> __dirname/path
-  const resolve = fileResolver(__dirname);
-
+  const cache   = new Cache({ directory: __dirname });
 
   describe('exists in file system', function() {
 
@@ -39,7 +34,7 @@ describe('Extract stylesheets', function() {
           text-decoration: underline;
         }
       </style>
-      <link rel="stylesheet" href="/blue_body.css">
+      <link rel="stylesheet" href="/extract_rules.css">
       <!-- not extracted -->
       <link rel="stylesheet" href="http://example.com/external.css">
     </head>
@@ -49,7 +44,7 @@ describe('Extract stylesheets', function() {
     let dom;
 
     before(function() {
-      const context = new Context({ html, cache, resolve });
+      const context = new Context({ html, cache });
       const parsed  = parseHTML(context);
       dom = parsed.dom;
 
@@ -99,7 +94,7 @@ describe('Extract stylesheets', function() {
     let parseError;
 
     before(function() {
-      const context = new Context({ html, cache, resolve });
+      const context = new Context({ html, cache });
       const parsed  = parseHTML(context);
       return extractRules(parsed)
         .catch(function(error) {
@@ -135,7 +130,7 @@ describe('Extract stylesheets', function() {
     let loadError;
 
     before(function() {
-      const context = new Context({ html, cache, resolve });
+      const context = new Context({ html, cache });
       const parsed  = parseHTML(context);
       return extractRules(parsed)
         .catch(function(error) {

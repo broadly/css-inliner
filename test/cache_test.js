@@ -48,12 +48,12 @@ describe('Compile CSS', function() {
 
 describe('Load and compile CSS', function() {
 
-  const cache   = new Cache();
+  const cache   = new Cache({ directory: __dirname });
   const results = [];
 
   before(function() {
     return cache
-      .load(`${__dirname}/blue_body.css`)
+      .load('cache_test.css')
       .then(function(result) {
         results.push(result);
       });
@@ -73,7 +73,7 @@ describe('Load and compile CSS', function() {
     before(function() {
       assert.equal(results.length, 1);
       return cache
-        .load(`${__dirname}/blue_body.css`)
+        .load('cache_test.css')
         .then(function(result) {
           results.push(result);
         });

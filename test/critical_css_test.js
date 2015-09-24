@@ -23,7 +23,7 @@ const SOURCE = `
         text-decoration: underline;
       }
     </style>
-    <link rel="stylesheet" href="blue_body.css">
+    <link rel="stylesheet" href="extract_rules.css">
     <link rel="stylesheet" href="http://example.com/style.css">
   </head>
   <body>
