@@ -1,3 +1,4 @@
+'use strict';
 const assert                = require('assert');
 const calculateSpecificity  = require('../lib/calc_specificity');
 
