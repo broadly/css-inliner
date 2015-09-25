@@ -1,7 +1,7 @@
 'use strict';
-const assert    = require('assert');
-const CSSInline = require('../');
-const File      = require('fs');
+const assert      = require('assert');
+const CSSInliner  = require('../');
+const File        = require('fs');
 
 
 describe('Inline CSS', function() {
@@ -9,7 +9,7 @@ describe('Inline CSS', function() {
   let actual;
 
   before(function() {
-    const inliner = new CSSInline({
+    const inliner = new CSSInliner({
       directory: __dirname
     });
     const source  = File.readFileSync(`${__dirname}/inline.html`, 'utf-8');
