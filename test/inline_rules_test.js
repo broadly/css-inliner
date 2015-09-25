@@ -1,5 +1,5 @@
 'use strict';
-const applyInline = require('../lib/apply_inline');
+const inlineRules = require('../lib/inline_rules');
 const assert      = require('assert');
 const CSSselect   = require('css-select');
 const Cache       = require('../lib/cache');
@@ -35,8 +35,8 @@ describe('Apply inline', function() {
     return cache.compile(css)
       .then(function(result) {
         const withRules = parsed.set('rules', result.rules);
-        applyInline(withRules);
-        return withRules.dom;
+        const inlined   = inlineRules(withRules);
+        return inlined.dom;
       });
   }
 
