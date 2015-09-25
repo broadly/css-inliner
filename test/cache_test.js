@@ -10,8 +10,7 @@ describe('Compile CSS', function() {
   const results = [];
 
   before(function() {
-    return cache
-      .compile(css)
+    return cache.compileAsync(css)
       .then(function(result) {
         results.push(result);
       });
@@ -30,8 +29,7 @@ describe('Compile CSS', function() {
 
     before(function() {
       assert.equal(results.length, 1);
-      return cache
-        .compile(css)
+      return cache.compileAsync(css)
         .then(function(result) {
           results.push(result);
         });
@@ -52,8 +50,7 @@ describe('Load and compile CSS', function() {
   const results = [];
 
   before(function() {
-    return cache
-      .load('cache_test.css')
+    return cache.loadAsync('cache_test.css')
       .then(function(result) {
         results.push(result);
       });
@@ -72,8 +69,7 @@ describe('Load and compile CSS', function() {
 
     before(function() {
       assert.equal(results.length, 1);
-      return cache
-        .load('cache_test.css')
+      return cache.loadAsync('cache_test.css')
         .then(function(result) {
           results.push(result);
         });

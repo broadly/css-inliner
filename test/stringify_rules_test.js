@@ -28,7 +28,7 @@ h1:hover,  h1:before  {
 
   before(function() {
     const cache = new Cache();
-    return cache.compile(source)
+    return cache.compileAsync(source)
       .then(function(result) {
         rules = result.rules;
       });

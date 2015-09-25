@@ -31,7 +31,7 @@ describe('Dynamic rules', function() {
 
   before(function() {
     const cache = new Cache();
-    return cache.compile(css)
+    return cache.compileAsync(css)
       .then(function(result) {
         const context = new Context(result);
         rules = selectDynamic(context).rules;

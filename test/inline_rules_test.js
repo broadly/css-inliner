@@ -32,7 +32,7 @@ describe('Apply inline', function() {
     const cache   = new Cache();
     const context = new Context({ html });
     const parsed  = parseHTML(context);
-    return cache.compile(css)
+    return cache.compileAsync(css)
       .then(function(result) {
         const withRules = parsed.set('rules', result.rules);
         const inlined   = inlineRules(withRules);
