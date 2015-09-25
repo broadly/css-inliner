@@ -1,13 +1,13 @@
 'use strict';
-const appendRules = require('../lib/append_rules');
-const assert      = require('assert');
-const Cache       = require('../lib/cache');
-const Context     = require('../lib/context');
-const DOMUtils    = require('domutils');
-const parseHTML   = require('../lib/parse_html');
+const addRules  = require('../lib/add_rules');
+const assert    = require('assert');
+const Cache     = require('../lib/cache');
+const Context   = require('../lib/context');
+const DOMUtils  = require('domutils');
+const parseHTML = require('../lib/parse_html');
 
 
-describe('Append rules', function() {
+describe('Add rules', function() {
 
   const css =
 `@media print {
@@ -19,7 +19,6 @@ h1:hover,  h1:before  {
   color : red ;
   background: none ;
 }`;
-  const expectedCSS = `@media print{.footer{display:none}}h1:hover,h1:before{color:red;background:none}`;
 
   let   rules;
 
@@ -40,11 +39,11 @@ h1:hover,  h1:before  {
     before(function() {
       const initial = new Context({ html, rules });
       const parsed  = parseHTML(initial);
-      appendRules(parsed);
+      addRules(parsed);
       dom = parsed.dom;
     });
 
-    it('should append rules to beginning of head', function() {
+    it('should insert rules to beginning of head', function() {
       const expected  = `<html><head><style>${css}</style><title>Hello</title></head><body><h1>Some div</h1></body></html>`;
       const html = DOMUtils.getOuterHTML(dom);
       assert.equal(html, expected);
@@ -60,11 +59,11 @@ h1:hover,  h1:before  {
     before(function() {
       const initial = new Context({ html, rules });
       const parsed  = parseHTML(initial);
-      appendRules(parsed);
+      addRules(parsed);
       dom = parsed.dom;
     });
 
-    it('should append rules to beginning of body', function() {
+    it('should insert rules to beginning of body', function() {
       const expected  = `<body><style>${css}</style><h1>Som div</h1></body>`;
       const html      = DOMUtils.getOuterHTML(dom);
       assert.equal(html, expected);
@@ -80,11 +79,11 @@ h1:hover,  h1:before  {
     before(function() {
       const initial = new Context({ html, rules });
       const parsed  = parseHTML(initial);
-      appendRules(parsed);
+      addRules(parsed);
       dom = parsed.dom;
     });
 
-    it('should append rules to beginning of document', function() {
+    it('should insert rules to beginning of document', function() {
       const expected  = `<style>${css}</style><div>Some div</div>`;
       const html      = DOMUtils.getOuterHTML(dom);
       assert.equal(html, expected);
