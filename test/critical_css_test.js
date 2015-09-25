@@ -51,7 +51,7 @@ describe('Critical CSS', function() {
 
   before(function() {
     const inliner = new CSSInliner({ directory: __dirname });
-    return inliner.criticalAsync(SOURCE)
+    return inliner.criticalPathAsync(SOURCE)
       .then(function(html) {
         result = html;
       });

@@ -14,7 +14,7 @@ describe('Inline CSS', function() {
     });
     const source  = File.readFileSync(`${__dirname}/inline.html`, 'utf-8');
     return inliner
-      .inlineAsync(source)
+      .inlineCSSAsync(source)
       .then(function(result) {
         actual = result;
       });
