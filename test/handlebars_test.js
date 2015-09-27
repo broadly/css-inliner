@@ -112,5 +112,42 @@ describe('Handlebar templates', function() {
     assert.equal(actual, expected);
   });
 
+  it('should not fail on multiple line tags', function() {
+    const html      = '{{userMessage\ntag="h1"\nname="assaf"}}';
+    const expected  = html;
+    const actual    = roundTrip(html);
+    assert.equal(actual, expected);
+  });
+
+
+  describe('inline CSS', function() {
+
+    it('should retain template tags', function() {
+      const html      = '<style>.foo{color:red}</style><div class="foo">{{userMessage tagName="h1"}}</div>';
+      const expected  = '<div class="foo" style="color:red">{{userMessage tagName="h1"}}</div>';
+      const inliner   = new CSSInliner();
+      return inliner
+        .inlineCSSAsync(html)
+        .then(function(actual) {
+          assert.equal(actual, expected);
+        });
+    });
+  });
+
+
+  describe('critical path', function() {
+
+    it('should retain template tags', function() {
+      const html      = '<style>.foo{color:red}</style><div class="foo">{{userMessage tagName="h1"}}</div>';
+      const expected  = html;
+      const inliner   = new CSSInliner();
+      return inliner
+        .criticalPathAsync(html)
+        .then(function(actual) {
+          assert.equal(actual, expected);
+        });
+    });
+  });
+
 });
 
