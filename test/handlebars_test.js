@@ -1,17 +1,21 @@
 'use strict';
-const assert    = require('assert');
-const Context   = require('../lib/context');
-const domToHTML = require('../lib/dom_to_html');
-const parseHTML = require('../lib/parse_html');
+const assert        = require('assert');
+const Context       = require('../lib/context');
+const CSSInliner    = require('../');
+const domToHTML     = require('../lib/dom_to_html');
+const parseHTML     = require('../lib/parse_html');
+const TemplateTags  = require('../lib/template_tags');
 
 
 describe('Handlebar templates', function() {
 
   function roundTrip(html) {
     const context     = new Context({ html });
-    const parsed      = parseHTML(context);
+    const stashed     = TemplateTags.stash(context);
+    const parsed      = parseHTML(stashed);
     const serialized  = domToHTML(parsed);
-    return serialized.html;
+    const restored    = TemplateTags.restore(serialized);
+    return restored.html;
   }
 
   it('should allow expressions', function() {
