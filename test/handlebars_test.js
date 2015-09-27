@@ -146,6 +146,13 @@ describe('Handlebar templates', function() {
     assert.equal(actual, expected);
   });
 
+  it('should deal with nested template tags', function() {
+    const html      = '{{foo}}{{bar tag="{{foo}}"}}';
+    const expected  = html;
+    const actual    = roundTrip(html);
+    assert.equal(actual, expected);
+  });
+
 
   describe('inline CSS', function() {
 
