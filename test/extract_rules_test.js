@@ -22,23 +22,19 @@ describe('Extract stylesheets', function() {
   describe('exists in file system', function() {
 
     const html =
-  `<html>
-    <head>
-      <!-- extracted -->
-      <style>
-        @media screen {
-          h1 { color: red; }
-        }
-        h2 { color: green; }
-        h3, h2:hover {
-          text-decoration: underline;
-        }
-      </style>
-      <link rel="stylesheet" href="/extract_rules.css">
-      <!-- not extracted -->
-      <link rel="stylesheet" href="http://example.com/external.css">
-    </head>
-  </html>`;
+`<!-- extracted -->
+<style>
+  @media screen {
+    h1 { color: red; }
+  }
+  h2 { color: green; }
+  h3, h2:hover {
+    text-decoration: underline;
+  }
+</style>
+<link rel="stylesheet" href="/extract_rules.css">
+<!-- not extracted -->
+<link rel="stylesheet" href="http://example.com/external.css">`;
 
     let rules;
     let dom;
