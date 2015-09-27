@@ -130,6 +130,16 @@ describe('Handlebar templates', function() {
     assert.equal(actual, expected);
   });
 
+  it('should deal with duplicate tags', function() {
+    const tag       = '{{userMessage tag="h1"}}';
+    const html      = `${tag}${tag}`;
+    const expected  = html;
+    const actual    = roundTrip(html);
+    assert.equal(actual, expected);
+  });
+
+
+
   describe('inline CSS', function() {
 
     it('should retain template tags', function() {
