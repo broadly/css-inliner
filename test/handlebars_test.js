@@ -123,13 +123,12 @@ describe('Handlebar templates', function() {
     assert.equal(actual, expected);
   });
 
-  it('should support nested brackets', function() {
+  it('should deal with quoted braces', function() {
     const html      = '{{userMessage single=\'}}\' double="}}" }}';
     const expected  = html;
     const actual    = roundTrip(html);
     assert.equal(actual, expected);
   });
-
 
   describe('inline CSS', function() {
 
@@ -143,6 +142,18 @@ describe('Handlebar templates', function() {
           assert.equal(actual, expected);
         });
     });
+
+    it('should deal with tags in style element', function() {
+      const html      = '<style>.foo{color:red}</style><div class="foo" style="{{style "foo"}}"></div>';
+      const expected  = '<div class="foo" style="{{style "foo"}};color:red"></div>';
+      const inliner   = new CSSInliner();
+      return inliner
+        .inlineCSSAsync(html)
+        .then(function(actual) {
+          assert.equal(actual, expected);
+        });
+    });
+
   });
 
 
