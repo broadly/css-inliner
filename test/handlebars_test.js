@@ -53,36 +53,43 @@ describe('Handlebar templates', function() {
     assert.equal(actual, expected);
   });
 
-  it('should allow escaped blocks', function() {
-    const html      = '\\{{escaped}}\n{{{{raw}}}{{escaped}}{{{{/raw}}}}';
+  it('should allow raw blocks', function() {
+    const html      = '{{{{raw}}}}{{escaped}}{{{{/raw}}}}';
     const expected  = html;
     const actual    = roundTrip(html);
     assert.equal(actual, expected);
   });
 
-  it('should allow escaped blocks (with quoted args)', function() {
-    const html      = '\\{{escaped "foo"}}\n{{{{raw "bar"}}}{{escaped "foo"}}{{{{/raw}}}}';
-    const expected  = html;
+  it('should allow raw blocks (with quoted args)', function() {
+    const html      = '{{{{raw "bar"}}}}{{escaped "foo"}}{{{{/raw}}}}';
+    const expected  = '{{{{raw "bar"}}}}{{escaped "foo"}}{{{{/raw}}}}';
+    const actual    = roundTrip(html);
+    assert.equal(actual, expected);
+  });
+
+  it('should ignore escaped blocks', function() {
+    const html      = '\\{{escaped "foo"}}';
+    const expected  = '\\{{escaped &quot;foo&quot;}}';
     const actual    = roundTrip(html);
     assert.equal(actual, expected);
   });
 
   it('should allow blocks around elements', function() {
-    const html      = '{{#if user}}<h1>Welcome back</h1>{{/else}}Login{{/if}}';
+    const html      = '{{#if user}}<h1>Welcome back</h1>{{else}}Login{{/if}}';
     const expected  = html;
     const actual    = roundTrip(html);
     assert.equal(actual, expected);
   });
 
   it('should allow blocks in attribute values', function() {
-    const html      = '<input value="{{#if user}}{{user}}{{/else}}unknown{{/if}}">';
+    const html      = '<input value="{{#if user}}{{user}}{{else}}unknown{{/if}}">';
     const expected  = html;
     const actual    = roundTrip(html);
     assert.equal(actual, expected);
   });
 
   it('should allow blocks in attribute values (with quoted args)', function() {
-    const html      = '<input value="{{#if user}}{{format user "f.L"}}{{/else}}unknown{{/if}}">';
+    const html      = '<input value="{{#if user}}{{format user "f.L"}}{{else}}unknown{{/if}}">';
     const expected  = html;
     const actual    = roundTrip(html);
     assert.equal(actual, expected);
