@@ -5,12 +5,13 @@ const CSSInliner    = require('../');
 const domToHTML     = require('../lib/dom_to_html');
 const parseHTML     = require('../lib/parse_html');
 const TemplateTags  = require('../lib/template_tags');
+const retag         = require('../lib/handlebars');
 
 
 describe('Handlebar templates', function() {
 
   function roundTrip(html) {
-    const context     = new Context({ html });
+    const context     = new Context({ html, retag });
     const stashed     = TemplateTags.stash(context);
     const parsed      = parseHTML(stashed);
     const serialized  = domToHTML(parsed);
@@ -151,7 +152,7 @@ describe('Handlebar templates', function() {
     it('should retain template tags', function() {
       const html      = '<style>.foo{color:red}</style><div class="foo">{{userMessage tagName="h1"}}</div>';
       const expected  = '<div class="foo" style="color:red">{{userMessage tagName="h1"}}</div>';
-      const inliner   = new CSSInliner();
+      const inliner   = new CSSInliner({ retag });
       return inliner
         .inlineCSSAsync(html)
         .then(function(actual) {
@@ -162,7 +163,7 @@ describe('Handlebar templates', function() {
     it('should deal with tags in style element', function() {
       const html      = '<style>.foo{color:red}</style><div class="foo" style="{{style "foo"}}"></div>';
       const expected  = '<div class="foo" style="{{style "foo"}};color:red"></div>';
-      const inliner   = new CSSInliner();
+      const inliner   = new CSSInliner({ retag });
       return inliner
         .inlineCSSAsync(html)
         .then(function(actual) {
@@ -178,13 +179,29 @@ describe('Handlebar templates', function() {
     it('should retain template tags', function() {
       const html      = '<style>.foo{color:red}</style><div class="foo">{{userMessage tagName="h1"}}</div>';
       const expected  = html;
-      const inliner   = new CSSInliner();
+      const inliner   = new CSSInliner({ retag });
       return inliner
         .criticalPathAsync(html)
         .then(function(actual) {
           assert.equal(actual, expected);
         });
     });
+  });
+
+
+  describe('without tag extraction', function() {
+
+    it('should treat them as HTML content', function() {
+      const html      = '<div class="foo">{{userMessage tagName="h1"}}</div>';
+      const expected  = '<div class="foo">{{userMessage tagName=&quot;h1&quot;}}</div>';
+      const inliner   = new CSSInliner();
+      return inliner
+        .inlineCSSAsync(html)
+        .then(function(actual) {
+          assert.equal(actual, expected);
+        });
+    });
+
   });
 
 });
