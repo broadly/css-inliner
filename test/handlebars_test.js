@@ -139,7 +139,6 @@ describe('Handlebar templates', function() {
   });
 
 
-
   describe('inline CSS', function() {
 
     it('should retain template tags', function() {
