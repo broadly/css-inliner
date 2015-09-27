@@ -2,10 +2,9 @@
 const assert        = require('assert');
 const Cache         = require('../lib/cache');
 const Context       = require('../lib/context');
+const CSSInliner    = require('../');
 const CSSselect     = require('css-select');
 const extractRules  = require('../lib/extract_rules');
-const Less          = require('less');
-const loadFrom      = require('../lib/load_from');
 const parseHTML     = require('../lib/parse_html');
 
 
@@ -14,18 +13,11 @@ describe('Extract Less stylesheets', function() {
 
   // html -> { dom, rules }
   function parseAndExtract(html) {
-
-    const loadAsync = loadFrom(__dirname);
-    function loadLessAsync(filename) {
-      return loadAsync(filename)
-        .then(source => source.toString())
-        .then(less => Less.render(less))
-        .then(result => result.css);
-    }
-
-    const cache   = new Cache({ loadAsync: loadLessAsync });
-    const context = new Context({ html, cache });
-    const parsed  = parseHTML(context);
+    const directory   = __dirname;
+    const precompile  = CSSInliner.less;
+    const cache       = new Cache({ directory, precompile });
+    const context     = new Context({ html, cache });
+    const parsed      = parseHTML(context);
     return extractRules(parsed);
   }
 
