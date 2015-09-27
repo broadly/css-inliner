@@ -5,13 +5,13 @@ const CSSInliner    = require('../');
 const domToHTML     = require('../lib/dom_to_html');
 const parseHTML     = require('../lib/parse_html');
 const TemplateTags  = require('../lib/template_tags');
-const retag         = require('../lib/handlebars');
 
 
 describe('Handlebar templates', function() {
 
   function roundTrip(html) {
-    const context     = new Context({ html, retag });
+    const template    = CSSInliner.handlebars;
+    const context     = new Context({ html, template });
     const stashed     = TemplateTags.stash(context);
     const parsed      = parseHTML(stashed);
     const serialized  = domToHTML(parsed);
@@ -159,7 +159,8 @@ describe('Handlebar templates', function() {
     it('should retain template tags', function() {
       const html      = '<style>.foo{color:red}</style><div class="foo">{{userMessage tagName="h1"}}</div>';
       const expected  = '<div class="foo" style="color:red">{{userMessage tagName="h1"}}</div>';
-      const inliner   = new CSSInliner({ retag });
+      const template  = CSSInliner.handlebars;
+      const inliner   = new CSSInliner({ template });
       return inliner
         .inlineCSSAsync(html)
         .then(function(actual) {
@@ -170,7 +171,7 @@ describe('Handlebar templates', function() {
     it('should deal with tags in style element', function() {
       const html      = '<style>.foo{color:red}</style><div class="foo" style="{{style "foo"}}"></div>';
       const expected  = '<div class="foo" style="{{style "foo"}};color:red"></div>';
-      const inliner   = new CSSInliner({ retag });
+      const inliner   = new CSSInliner({ template: CSSInliner.handlebars });
       return inliner
         .inlineCSSAsync(html)
         .then(function(actual) {
@@ -186,7 +187,8 @@ describe('Handlebar templates', function() {
     it('should retain template tags', function() {
       const html      = '<style>.foo{color:red}</style><div class="foo">{{userMessage tagName="h1"}}</div>';
       const expected  = html;
-      const inliner   = new CSSInliner({ retag });
+      const template  = CSSInliner.handlebars;
+      const inliner   = new CSSInliner({ template });
       return inliner
         .criticalPathAsync(html)
         .then(function(actual) {
