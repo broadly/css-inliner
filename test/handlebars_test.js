@@ -123,6 +123,13 @@ describe('Handlebar templates', function() {
     assert.equal(actual, expected);
   });
 
+  it('should support nested brackets', function() {
+    const html      = '{{userMessage single=\'}}\' double="}}" }}';
+    const expected  = html;
+    const actual    = roundTrip(html);
+    assert.equal(actual, expected);
+  });
+
 
   describe('inline CSS', function() {
 
