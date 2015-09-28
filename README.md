@@ -93,8 +93,7 @@ const inliner     = new CSSInliner({ precompile });
 
 The `precompile` option takes a function that will be called with two arguments:
 the pathname, and the stylesheet.  You can use the pathname to determine the
-file type based on its extension (e.g. does it end with `.less`?)  The
-stylesheet source is provided as a Buffer.
+file type based on its extension (e.g. does it end with `.less`?)
 
 The function should return the compiled CSS in the form of a string or a Buffer,
 or a promise that resolves to a string or Buffer.
