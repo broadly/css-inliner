@@ -78,6 +78,28 @@ If a rule has multiple selectors, it may be inlined using one selector, and
 included in the document with another selector.
 
 
+## Working with templates (Handlebars, etc)
+
+Inlining requires parsing the HTML document, and when there are non-HTML tags in
+the document, they are often parsed incorrectly.  Many templating languages use
+non-HTML tags.
+
+Use the `template` option with an appropriate template parser.  For example,
+when working with Handlebar templates:
+
+```js
+const template = CSSInliner.handlebars;
+const inliner  = new CSSInliner({ template });
+```
+
+The template handler is a function that will be called with the source template,
+and must return an array of all template tags found there.
+
+These tags are then replaced with markers, before parsing the HTML and inlining,
+and are restored before resolving to the final HTML.
+
+
+
 ## References
 
 [CSS 3: Calculating a selector's specificity](http://www.w3.org/TR/css3-selectors/#specificity)
