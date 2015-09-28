@@ -78,6 +78,28 @@ If a rule has multiple selectors, it may be inlined using one selector, and
 included in the document with another selector.
 
 
+
+## Working with Less/SASS/Stylus/etc
+
+If you're working with a language that compiles to CSS, you need to use the
+`precompile` option.
+
+A precompiled for Less is included by default, and you can use it like this:
+
+```js
+const precompile  = CSSInliner.less;
+const inliner     = new CSSInliner({ precompile });
+```
+
+The `precompile` option takes a function that will be called with two arguments:
+the pathname, and the stylesheet.  You can use the pathname to determine the
+file type based on its extension (e.g. does it end with `.less`?)  The
+stylesheet source is provided as a Buffer.
+
+The function should return the compiled CSS in the form of a string or a Buffer,
+or a promise that resolves to a string or Buffer.
+
+
 ## References
 
 [CSS 3: Calculating a selector's specificity](http://www.w3.org/TR/css3-selectors/#specificity)
