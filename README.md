@@ -78,6 +78,31 @@ If a rule has multiple selectors, it may be inlined using one selector, and
 included in the document with another selector.
 
 
+
+
+## Working with Less/SASS/Stylus/etc
+
+If you're working with a language that compiles to CSS, you need to use the
+`precompile` option.
+
+A precompiled for Less is included by default, and you can use it like this:
+
+```js
+const precompile  = CSSInliner.less;
+const inliner     = new CSSInliner({ precompile });
+```
+
+(Less is an optional dependency, so you need to add it in your `package.json` if
+you want to use it.)
+
+The `precompile` option takes a function that will be called with two arguments:
+the pathname, and the stylesheet.  You can use the pathname to determine the
+file type based on its extension (e.g. does it end with `.less`?)
+
+The function should return the compiled CSS in the form of a string or a Buffer,
+or a promise that resolves to a string or Buffer.
+
+
 ## Working with templates (Handlebars, etc)
 
 Inlining requires parsing the HTML document, and when there are non-HTML tags in
@@ -97,7 +122,6 @@ and must return an array of all template tags found there.
 
 These tags are then replaced with markers, before parsing the HTML and inlining,
 and are restored before resolving to the final HTML.
-
 
 
 ## References

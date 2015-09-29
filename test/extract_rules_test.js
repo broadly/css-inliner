@@ -7,19 +7,25 @@ const extractRules  = require('../lib/extract_rules');
 const parseHTML     = require('../lib/parse_html');
 
 
-// [ Rule ] -> [ string ]
-function ruleNames(rules) {
-  return rules.map(function(rule) {
-    return rule.name ? `@${rule.name}` : rule.selector;
-  });
-}
-
-
 describe('Extract stylesheets', function() {
 
-  const cache   = new Cache({ directory: __dirname });
+  // [ rule ] -> [ string ]
+  function ruleNames(rules) {
+    return rules.map(function(rule) {
+      return rule.name ? `@${rule.name}` : rule.selector;
+    });
+  }
 
-  describe('exists in file system', function() {
+  // html -> { dom, rules }
+  function parseAndExtract(html) {
+    const cache   = new Cache({ directory: __dirname });
+    const context = new Context({ html, cache });
+    const parsed  = parseHTML(context);
+    return extractRules(parsed);
+  }
+
+
+  describe('that exists', function() {
 
     const html =
 `<!-- extracted -->
@@ -40,12 +46,9 @@ describe('Extract stylesheets', function() {
     let dom;
 
     before(function() {
-      const context = new Context({ html, cache });
-      const parsed  = parseHTML(context);
-      dom = parsed.dom;
-
-      return extractRules(parsed)
+      return parseAndExtract(html)
         .then(function(context) {
+          dom   = context.dom;
           rules = context.rules;
         });
     });
@@ -55,19 +58,22 @@ describe('Extract stylesheets', function() {
       assert.equal(styleElements.length, 0);
     });
 
-    it('should remove only resolved relative stylesheets', function() {
-      const styleElements = CSSselect.selectAll('link[rel~="stylesheet"]', dom);
-      assert.equal(styleElements.length, 1);
-      const href = styleElements[0].attribs.href;
+    it('should remove only local stylesheets', function() {
+      const linkElements = CSSselect.selectAll('link[rel~="stylesheet"]', dom);
+      assert.equal(linkElements.length, 1);
+
+      const href = linkElements[0].attribs.href;
       assert( href.startsWith('http://') );
     });
 
     it('should collect all rules', function() {
       assert.equal(rules.size, 4);
+
+      const rule = rules.get(3).toString().replace(/\s+/g, ' ');
+      assert.equal(rule, 'body { color: blue; }');
     });
 
     it('should collect rules in document order', function() {
-
       const names = ruleNames( rules );
       assert.deepEqual(names.toArray(), [ '@media', 'h2', 'h3, h2:hover', 'body' ]);
     });
@@ -77,22 +83,11 @@ describe('Extract stylesheets', function() {
 
   describe('invalid CSS', function() {
 
-    const html =
-`<html>
-  <head>
-    <style>
-      @media screen {
-        h1 { color: red; }
-    </style>
-  </head>
-</html>`;
-
     let parseError;
 
     before(function() {
-      const context = new Context({ html, cache });
-      const parsed  = parseHTML(context);
-      return extractRules(parsed)
+      const html = '<style>@media screen { h1 { color: red; </style>';
+      return parseAndExtract(html)
         .catch(function(error) {
           parseError = error;
         });
@@ -100,11 +95,11 @@ describe('Extract stylesheets', function() {
 
 
     it('should report error with line number', function() {
-      assert.equal(parseError.line, 2);
+      assert.equal(parseError.line, 1);
     });
 
     it('should report error with column number', function() {
-      assert.equal(parseError.column, 7);
+      assert.equal(parseError.column, 17);
     });
 
     it('should report error with reason', function() {
@@ -116,26 +111,18 @@ describe('Extract stylesheets', function() {
 
   describe('missing stylesheet', function() {
 
-    const html =
-  `<html>
-    <head>
-      <link rel="stylesheet" href="/not_found">
-    </head>
-  </html>`;
-
     let loadError;
 
     before(function() {
-      const context = new Context({ html, cache });
-      const parsed  = parseHTML(context);
-      return extractRules(parsed)
+      const html    = `<link rel="stylesheet" href="/not_found.css">`;
+      return parseAndExtract(html)
         .catch(function(error) {
           loadError = error;
         });
     });
 
     it('should report error with path', function() {
-      assert.equal(loadError.path, `${__dirname}/not_found`);
+      assert.equal(loadError.path, `${__dirname}/not_found.css`);
     });
 
     it('should report error with code', function() {
