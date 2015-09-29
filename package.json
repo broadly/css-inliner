@@ -15,7 +15,7 @@
     "entities": "^1.1.1",
     "immutable": "^3.7.5",
     "postcss": "^5.0.8",
-    "postcss-selector-parser": "^1.2.0"
+    "postcss-selector-parser": "^1.2.1"
   },
   "optionalDependencies": {
     "less": "^2.0.0"
