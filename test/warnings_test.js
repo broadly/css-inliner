@@ -82,13 +82,13 @@ describe('Warning', function() {
   });
 
 
-  describe.skip('when using template tag as class', function() {
+  describe('when using template tag as class', function() {
 
     const warnings = [];
 
     before(function() {
-      const html      = '<h1 class="foo {{handlbars}} bar">Hello</h1>';
-      const template  = CSSInliner.handlbars;
+      const html      = '<h1 class="foo {{handlebars}} bar">Hello</h1>';
+      const template  = CSSInliner.handlebars;
       const inliner   = new CSSInliner({ template });
       inliner.on('warning', function(warning) {
         warnings.push(warning);
@@ -98,7 +98,10 @@ describe('Warning', function() {
 
     it('should trigger warning event', function() {
       assert.equal(warnings.length, 1);
-      assert.equal(warnings[0], 'Using template tag as CSS class can lead to errors');
+    });
+
+    it('should report potential misuse of template tag', function() {
+      assert.equal(warnings[0], '<unknown>: One of the elements is using template tag for its class name');
     });
 
   });
