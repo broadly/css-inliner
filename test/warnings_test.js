@@ -13,12 +13,12 @@ describe('Warning', function() {
   });
 
 
-  describe('during CSS processing', function() {
+  describe('from <style> element', function() {
 
     const warnings = [];
 
     before(function() {
-      const html    = `<style></style><h1>Hello</h1>`;
+      const html    = '<style></style><h1>Hello</h1>';
       const inliner = new CSSInliner({ plugins: [addWarning] });
       inliner.on('warning', function(warning) {
         warnings.push(warning);
@@ -28,9 +28,34 @@ describe('Warning', function() {
 
     it('should trigger warning event', function() {
       assert.equal(warnings.length, 1);
-      assert.equal(warnings[0], 'add-warning: <css input>:1:1: There was some error');
     });
 
+    it('should report inline as the soruce', function() {
+      assert.equal(warnings[0], '<inline>: add-warning: <css input>:1:1: There was some error');
+    });
+  });
+
+
+  describe('from external stylesheet', function() {
+
+    const warnings = [];
+
+    before(function() {
+      const html    = '<link href="test/inline.style.css" rel="stylesheet"><h1>Hello</h1>';
+      const inliner = new CSSInliner({ plugins: [addWarning] });
+      inliner.on('warning', function(warning) {
+        warnings.push(warning);
+      });
+      return inliner.inlineCSSAsync(html);
+    });
+
+    it('should trigger warning event', function() {
+      assert.equal(warnings.length, 1);
+    });
+
+    it('should report filename as the soruce', function() {
+      assert.equal(warnings[0], 'test/inline.style.css: add-warning: <css input>:1:1: There was some error');
+    });
   });
 
 
@@ -39,7 +64,7 @@ describe('Warning', function() {
     let lastError;
 
     before(function() {
-      const html    = `<style></style><h1>Hello</h1>`;
+      const html    = '<style></style><h1>Hello</h1>';
       const inliner = new CSSInliner({ plugins: [addWarning] });
       inliner.on('warning', function(warning) {
         throw new Error(warning);
@@ -52,7 +77,7 @@ describe('Warning', function() {
 
     it('should stop processing', function() {
       assert(lastError);
-      assert.equal(lastError.message, 'add-warning: <css input>:1:1: There was some error');
+      assert.equal(lastError.message, '<inline>: add-warning: <css input>:1:1: There was some error');
     });
   });
 
@@ -62,7 +87,7 @@ describe('Warning', function() {
     const warnings = [];
 
     before(function() {
-      const html      = `<style></style><h1 class="foo {{handlbars}} bar">Hello</h1>`;
+      const html      = '<h1 class="foo {{handlbars}} bar">Hello</h1>';
       const template  = CSSInliner.handlbars;
       const inliner   = new CSSInliner({ template });
       inliner.on('warning', function(warning) {
