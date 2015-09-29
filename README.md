@@ -117,6 +117,9 @@ const template = CSSInliner.handlebars;
 const inliner  = new CSSInliner({ template });
 ```
 
+(Handlebars is an optional dependency, so you need to add it in your
+`package.json` if you want to use it.)
+
 The template handler is a function that will be called with the source template,
 and must return an array of all template tags found there.
 
