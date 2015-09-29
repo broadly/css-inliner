@@ -91,6 +91,9 @@ const precompile  = CSSInliner.less;
 const inliner     = new CSSInliner({ precompile });
 ```
 
+(Less is an optional dependency, so you need to add it in your `package.json` if
+you want to use it.)
+
 The `precompile` option takes a function that will be called with two arguments:
 the pathname, and the stylesheet.  You can use the pathname to determine the
 file type based on its extension (e.g. does it end with `.less`?)
