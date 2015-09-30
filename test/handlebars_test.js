@@ -70,7 +70,7 @@ describe('Handlebar templates', function() {
 
   it('should ignore escaped blocks', function() {
     const html      = '\\{{escaped "foo"}}';
-    const expected  = '\\{{escaped &quot;foo&quot;}}';
+    const expected  = '\\{{escaped "foo"}}';
     const actual    = roundTrip(html);
     assert.equal(actual, expected);
   });
