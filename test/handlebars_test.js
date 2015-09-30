@@ -179,6 +179,16 @@ describe('Handlebar templates', function() {
         });
     });
 
+    it('should inline inside blocks', function() {
+      const html      = '<style>.foo{color:red}</style>{{#with this}}<div class="foo"></div>{{/with}}';
+      const expected  = '{{#with this}}<div class="foo" style="color:red"></div>{{/with}}';
+      const inliner   = new CSSInliner({ template: CSSInliner.handlebars });
+      return inliner
+        .inlineCSSAsync(html)
+        .then(function(actual) {
+          assert.equal(actual, expected);
+        });
+    });
   });
 
 
