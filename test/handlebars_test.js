@@ -1,10 +1,6 @@
 'use strict';
 const assert        = require('assert');
-const Context       = require('../lib/context');
 const CSSInliner    = require('../');
-const domToHTML     = require('../lib/dom_to_html');
-const parseHTML     = require('../lib/parse_html');
-const TemplateTags  = require('../lib/template_tags');
 
 
 describe('Handlebar templates', function() {
