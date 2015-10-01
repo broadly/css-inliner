@@ -22,7 +22,7 @@ describe('Extract stylesheets', function() {
   }
 
 
-  describe('that exists', function() {
+  describe('that exist', function() {
 
     const html =
 `<!-- extracted -->

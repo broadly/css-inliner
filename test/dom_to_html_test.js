@@ -15,23 +15,23 @@ describe('DOM to HTML', function() {
   }
 
 
-  describe('regular attribute', function() {
+  describe('a regular attribute', function() {
 
-    it('should produce attribute name and value', function() {
+    it('should produce attribute name equals quoted value', function() {
       const html      = '<input value="">';
       const expected  = '<input value="">';
       const actual    = roundTrip(html);
       assert.equal(actual, expected);
     });
 
-    it('should quote attribute value', function() {
+    it('should quote attribute value (even if not quoted)', function() {
       const html      = '<input value=foobar>';
       const expected  = '<input value="foobar">';
       const actual    = roundTrip(html);
       assert.equal(actual, expected);
     });
 
-    it('should encode quotes in attribute value', function() {
+    it('should encode double quotes in attribute value', function() {
       const html      = '<input value=\'foo"bar\'>';
       const expected  = '<input value="foo&quot;bar">';
       const actual    = roundTrip(html);
@@ -52,7 +52,7 @@ describe('DOM to HTML', function() {
       assert.equal(actual, expected);
     });
 
-    it('should preserve encoded attribute value', function() {
+    it('should encode any entities from source document', function() {
       const html      = '<input value="foo&quot;&amp;&gt;bar">';
       const expected  = '<input value="foo&quot;&amp;&gt;bar">';
       const actual    = roundTrip(html);
@@ -62,10 +62,10 @@ describe('DOM to HTML', function() {
   });
 
 
-  describe('boolean attribute', function() {
+  describe('a boolean attribute', function() {
 
     describe('with value', function() {
-      it('should produce empty attribute name', function() {
+      it('should produce attribute name with no value', function() {
         const html      = '<input autofocus=autofocus>';
         const expected  = '<input autofocus>';
         const actual    = roundTrip(html);
@@ -74,7 +74,7 @@ describe('DOM to HTML', function() {
     });
 
     describe('without value', function() {
-      it('should produce empty attribute name', function() {
+      it('should produce attribute name with no value', function() {
         const html      = '<input autofocus>';
         const expected  = '<input autofocus>';
         const actual    = roundTrip(html);
@@ -85,7 +85,7 @@ describe('DOM to HTML', function() {
   });
 
 
-  describe('element', function() {
+  describe('an element', function() {
 
     it('should produce all attributes', function() {
       const html      = '<input class="input-lg" name="name" value="Assaf" autofocus required>';
@@ -94,7 +94,7 @@ describe('DOM to HTML', function() {
       assert.equal(actual, expected);
     });
 
-    describe('void', function() {
+    describe('(void)', function() {
       it('should produce only open tag', function() {
         const html      = '<input autofocus>';
         const expected  = html;
@@ -103,7 +103,7 @@ describe('DOM to HTML', function() {
       });
     });
 
-    describe('empty', function() {
+    describe('(empty)', function() {
       it('should produce open and close tags', function() {
         const html      = '<textarea></textarea>';
         const expected  = html;
@@ -112,8 +112,8 @@ describe('DOM to HTML', function() {
       });
     });
 
-    describe('complex content', function() {
-      it('should produce element and contents', function() {
+    describe('(complex content)', function() {
+      it('should produce element with contents', function() {
         const html      = '<p>So <b>bold</b> in here!<br></p>';
         const expected  = html;
         const actual    = roundTrip(html);
@@ -121,7 +121,7 @@ describe('DOM to HTML', function() {
       });
     });
 
-    describe('empty (XML)', function() {
+    describe('(XML in HTML, empty)', function() {
       it('should produce self-closing tag', function() {
         const html      = '<svg autofocus></svg>';
         const expected  = '<svg autofocus/>';
@@ -130,7 +130,7 @@ describe('DOM to HTML', function() {
       });
     });
 
-    describe('complex XML', function() {
+    describe('(XML in HTML)', function() {
       it('should produce element and contents', function() {
         const html      = '<svg><rect/><path/></svg>';
         const expected  = html;
@@ -142,8 +142,8 @@ describe('DOM to HTML', function() {
   });
 
 
-  describe('declaration', function() {
-    it('should preserve in output', function() {
+  describe('a declaration', function() {
+    it('should produce itself', function() {
       const html      = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html></html>';
       const expected  = html;
       const actual    = roundTrip(html);
@@ -152,8 +152,8 @@ describe('DOM to HTML', function() {
   });
 
 
-  describe('text content', function() {
-    it('should encode as necessary', function() {
+  describe('any text content', function() {
+    it('should encode HTML entities', function() {
       const html      = '<p>This "quotes" & apostrophe\'s &lt;3 </p>';
       const expected  = '<p>This &quot;quotes&quot; &amp; apostrophe&apos;s &lt;3 </p>';
       const actual    = roundTrip(html);
@@ -162,7 +162,7 @@ describe('DOM to HTML', function() {
   });
 
 
-  describe('style element', function() {
+  describe('a style element', function() {
     it('should not encode content', function() {
       const html      = '<style>.foo { font-family: "Helvetica"; }</style>';
       const expected  = html;
@@ -172,7 +172,7 @@ describe('DOM to HTML', function() {
   });
 
 
-  describe('script element', function() {
+  describe('a script element', function() {
     it('should not encode content', function() {
       const html      = '<script>alert("Hi there");}</script>';
       const expected  = html;
@@ -182,3 +182,4 @@ describe('DOM to HTML', function() {
   });
 
 });
+

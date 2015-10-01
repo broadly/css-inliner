@@ -37,7 +37,7 @@ h1:hover,  h1:before  {
 
 
   describe('to document with head', function() {
-    it('should insert rules to beginning of head', function() {
+    it('should insert rules at beginning of head', function() {
       const html      = '<html><head><title>Hello</title></head><body><h1>Some div</h1></body></html>';
       const expected  = `<html><head><style>${css}</style><title>Hello</title></head><body><h1>Some div</h1></body></html>`;
       return parseAndAddRules(html)
@@ -49,7 +49,7 @@ h1:hover,  h1:before  {
 
 
   describe('to document with body and no head', function() {
-    it('should insert rules to beginning of body', function() {
+    it('should insert rules at beginning of body', function() {
       const html      = '<body><h1>Som div</h1></body>';
       const expected  = `<body><style>${css}</style><h1>Som div</h1></body>`;
       return parseAndAddRules(html)
@@ -60,8 +60,8 @@ h1:hover,  h1:before  {
   });
 
 
-  describe('to document with no body or head', function() {
-    it('should insert rules to beginning of document', function() {
+  describe('to document with no body and no head', function() {
+    it('should insert rules at beginning of document', function() {
       const html      = '<div>Some div</div>';
       const expected  = `<style>${css}</style><div>Some div</div>`;
       return parseAndAddRules(html)

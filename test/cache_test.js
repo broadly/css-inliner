@@ -18,7 +18,7 @@ describe('Cache', function() {
         });
     });
 
-    it('should parse the CSS', function() {
+    it('should parse the CSS into PostCSS rules', function() {
       const rules = results[0].rules;
       const body  = rules.get(0);
       assert.equal(body.selector, 'body');
@@ -38,7 +38,7 @@ describe('Cache', function() {
           });
       });
 
-      it('should return cached result', function() {
+      it('should return cached result (same object)', function() {
         assert.equal(results[0], results[1]);
       });
 
@@ -59,7 +59,7 @@ describe('Cache', function() {
         });
     });
 
-    it('should parse the CSS', function() {
+    it('should parse the CSS into PostCSS rules', function() {
       const rules = results[0].rules;
       const body  = rules.get(0);
       assert.equal(body.selector, 'body');
@@ -79,7 +79,7 @@ describe('Cache', function() {
           });
       });
 
-      it('should return cached result', function() {
+      it('should return cached result (same object)', function() {
         assert.equal(results[0], results[1]);
       });
 

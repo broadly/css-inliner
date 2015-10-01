@@ -18,7 +18,7 @@ describe('Critical CSS', function() {
       });
   });
 
-  it('should produced critical path document', function() {
+  it('should produce HTML with critical path CSS', function() {
     const expected = File.readFileSync(`${__dirname}/critical.expected.html`, 'utf-8');
     assert.equal(actual, expected);
   });
@@ -53,14 +53,14 @@ describe('Critical CSS', function() {
     });
   });
 
-  it('should keep external link reference', function() {
+  it('should keep external link references', function() {
     const regexp = /<link rel="stylesheet" href="(.*)">/g;
     actual.replace(regexp, function(match, url) {
       assert.equal(url, 'http://example.com/style.css');
     });
   });
 
-  it('should leave body intact', function() {
+  it('should leave document body intact (no inlining)', function() {
     const regexp = /<body>\s+<h1>Hello World!<\/h1>\s+<\/body>/;
     assert( regexp.test(actual) );
   });

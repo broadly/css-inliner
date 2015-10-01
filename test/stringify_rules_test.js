@@ -36,7 +36,7 @@ h1:hover,  h1:before  {
 
   describe('without compression', function() {
 
-    it('should product same CSS minus empty lines', function() {
+    it('should produce same CSS minus empty lines', function() {
       const expected  = source.replace(/\n+/gm, '\n').trim();
       const actual    = stringifyRules(rules, false);
       assert.equal(actual, expected);

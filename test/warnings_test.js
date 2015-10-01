@@ -30,7 +30,7 @@ describe('Warning', function() {
       assert.equal(warnings.length, 1);
     });
 
-    it('should report inline as the soruce', function() {
+    it('should report <inline> as the soruce', function() {
       assert.equal(warnings[0], '<inline>: add-warning: <css input>:1:1: There was some error');
     });
   });
@@ -59,29 +59,6 @@ describe('Warning', function() {
   });
 
 
-  describe('when event handler throws', function() {
-
-    let lastError;
-
-    before(function() {
-      const html    = '<style></style><h1>Hello</h1>';
-      const inliner = new CSSInliner({ plugins: [addWarning] });
-      inliner.on('warning', function(warning) {
-        throw new Error(warning);
-      });
-      return inliner.inlineCSSAsync(html)
-        .catch(function(error) {
-          lastError = error;
-        });
-    });
-
-    it('should stop processing', function() {
-      assert(lastError);
-      assert.equal(lastError.message, '<inline>: add-warning: <css input>:1:1: There was some error');
-    });
-  });
-
-
   describe('when using template tag as class', function() {
 
     const warnings = [];
@@ -104,6 +81,29 @@ describe('Warning', function() {
       assert.equal(warnings[0], '<unknown>: One of the elements is using template tag for its class name');
     });
 
+  });
+
+
+  describe('when event handler throws', function() {
+
+    let lastError;
+
+    before(function() {
+      const html    = '<style></style><h1>Hello</h1>';
+      const inliner = new CSSInliner({ plugins: [addWarning] });
+      inliner.on('warning', function(warning) {
+        throw new Error(warning);
+      });
+      return inliner.inlineCSSAsync(html)
+        .catch(function(error) {
+          lastError = error;
+        });
+    });
+
+    it('should stop processing', function() {
+      assert(lastError);
+      assert.equal(lastError.message, '<inline>: add-warning: <css input>:1:1: There was some error');
+    });
   });
 
 });
