@@ -18,6 +18,7 @@
     "postcss-selector-parser": "^1.2.1"
   },
   "optionalDependencies": {
+    "handlebars": "^4.0.0",
     "less": "^2.0.0"
   },
   "devDependencies": {

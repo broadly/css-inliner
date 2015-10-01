@@ -79,6 +79,7 @@ included in the document with another selector.
 
 
 
+
 ## Working with Less/SASS/Stylus/etc
 
 If you're working with a language that compiles to CSS, you need to use the
@@ -100,6 +101,30 @@ file type based on its extension (e.g. does it end with `.less`?)
 
 The function should return the compiled CSS in the form of a string or a Buffer,
 or a promise that resolves to a string or Buffer.
+
+
+## Working with templates (Handlebars, etc)
+
+Inlining requires parsing the HTML document, and when there are non-HTML tags in
+the document, they are often parsed incorrectly.  Many templating languages use
+non-HTML tags.
+
+Use the `template` option with an appropriate template parser.  For example,
+when working with Handlebar templates:
+
+```js
+const template = CSSInliner.handlebars;
+const inliner  = new CSSInliner({ template });
+```
+
+(Handlebars is an optional dependency, so you need to add it in your
+`package.json` if you want to use it.)
+
+The template handler is a function that will be called with the source template,
+and must return an array of all template tags found there.
+
+These tags are then replaced with markers, before parsing the HTML and inlining,
+and are restored before resolving to the final HTML.
 
 
 ## Watching for warnings
