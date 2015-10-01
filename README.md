@@ -102,6 +102,24 @@ The function should return the compiled CSS in the form of a string or a Buffer,
 or a promise that resolves to a string or Buffer.
 
 
+## Watching for warnings
+
+The inliner may report warnings while processing CSS or HTML documents, by
+emitting a warning event.
+
+You can use an event handler to catch and log the warning.  You can also halt
+processing by throwing an error from your event handler.  If there are no event
+handlers, it will log the warning to stderr.
+
+```js
+const inliner = new CSSInliner(options);
+inliner.on('warning', function(warning) {
+  console.log('So this happened:', warning);
+});
+```
+
+
+
 ## References
 
 [CSS 3: Calculating a selector's specificity](http://www.w3.org/TR/css3-selectors/#specificity)

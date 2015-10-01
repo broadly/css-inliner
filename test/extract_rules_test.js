@@ -1,7 +1,6 @@
 'use strict';
 const assert        = require('assert');
-const Cache         = require('../lib/cache');
-const Context       = require('../lib/context');
+const CSSInliner    = require('../');
 const CSSselect     = require('css-select');
 const extractRules  = require('../lib/extract_rules');
 const parseHTML     = require('../lib/parse_html');
@@ -18,10 +17,10 @@ describe('Extract stylesheets', function() {
 
   // html -> { dom, rules }
   function parseAndExtract(html) {
-    const cache   = new Cache({ directory: __dirname });
-    const context = new Context({ html, cache });
-    const parsed  = parseHTML(context);
-    return extractRules(parsed);
+    const inliner = new CSSInliner({ directory: __dirname });
+    return inliner._newContextAsync(html)
+      .then(parseHTML)
+      .then(extractRules);
   }
 
 
