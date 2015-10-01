@@ -13,33 +13,38 @@ function parseStyle(element) {
   const attribute   = element.attribs.style;
   const pairs       = attribute.split(/;/).map(property => property.split(':'));
   const properties  = pairs.reduce((object, pair)=> {
-    const name  = pair[0].trim().replace(/-\w/, m => m.slice(1).toUpperCase());
+    // font-color -> fontColor
+    const name  = pair[0].trim().replace(/-(\w)/, titlize);
     const value = pair[1].trim();
-    assert.equal(object[name], undefined, `Property ${name} appears twice in style attribute`);
+    assert(!object[name], `Property ${name} appears twice in style attribute`);
     object[name] = value;
     return object;
   }, {});
   return properties;
 }
 
+function titlize(match, word) {
+  return word.toUpperCase();
+}
+
+// Parses CSS stylesheet, applies to DOM, returns promise.
+//
+// (css, dom) -> promise()
+function applyCSS(html, css) {
+  const cache   = new Cache();
+  const context = new Context({ html });
+  const parsed  = parseHTML(context);
+  return cache.compileAsync(css)
+    .then(function(result) {
+      const withRules = parsed.set('rules', result.rules);
+      const inlined   = inlineRules(withRules);
+      return inlined.dom;
+    });
+}
+
+
 
 describe('Apply inline', function() {
-
-  // Parses CSS stylesheet, applies to DOM, returns promise.
-  //
-  // (css, dom) -> promise()
-  function applyCSS(html, css) {
-    const cache   = new Cache();
-    const context = new Context({ html });
-    const parsed  = parseHTML(context);
-    return cache.compileAsync(css)
-      .then(function(result) {
-        const withRules = parsed.set('rules', result.rules);
-        const inlined   = inlineRules(withRules);
-        return inlined.dom;
-      });
-  }
-
 
   describe('Element with matching rule', function() {
 

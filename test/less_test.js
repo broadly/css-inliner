@@ -1,7 +1,6 @@
 'use strict';
-const assert        = require('assert');
-const CSSInliner    = require('../');
-const CSSselect     = require('css-select');
+const assert      = require('assert');
+const CSSInliner  = require('../');
 
 
 describe('Extract Less stylesheets', function() {

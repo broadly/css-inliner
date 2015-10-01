@@ -10,9 +10,7 @@ describe('Extract stylesheets', function() {
 
   // [ rule ] -> [ string ]
   function ruleNames(rules) {
-    return rules.map(function(rule) {
-      return rule.name ? `@${rule.name}` : rule.selector;
-    });
+    return rules.map(rule => rule.name ? `@${rule.name}` : rule.selector);
   }
 
   // html -> { dom, rules }

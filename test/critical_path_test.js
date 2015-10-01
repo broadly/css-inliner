@@ -9,9 +9,7 @@ describe('Critical CSS', function() {
   let actual;
 
   before(function() {
-    const inliner = new CSSInliner({
-      directory: __dirname
-    });
+    const inliner = new CSSInliner({ directory: __dirname });
     const source  = File.readFileSync(`${__dirname}/critical.html`, 'utf-8');
     return inliner
       .criticalPathAsync(source)

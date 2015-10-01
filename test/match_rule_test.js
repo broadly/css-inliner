@@ -121,3 +121,4 @@ describe('Rule matcher', function() {
   });
 
 });
+
