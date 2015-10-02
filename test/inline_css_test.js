@@ -6,23 +6,16 @@ const File        = require('fs');
 
 describe('Inline CSS', function() {
 
-  let actual;
+  const inliner = new CSSInliner({ directory: __dirname });
 
-  before(function() {
-    const inliner = new CSSInliner({
-      directory: __dirname
-    });
-    const source  = File.readFileSync(`${__dirname}/inline.html`, 'utf-8');
+  it('should produce inlined document', function() {
+    const html      = File.readFileSync(`${__dirname}/inline.html`, 'utf-8');
+    const expected  = File.readFileSync(`${__dirname}/inline.expected.html`, 'utf-8');
     return inliner
-      .inlineCSSAsync(source)
-      .then(function(result) {
-        actual = result;
+      .inlineCSSAsync(html)
+      .then(function(actual) {
+        assert.equal(actual, expected);
       });
-  });
-
-  it('should produced inlined document', function() {
-    const expected = File.readFileSync(`${__dirname}/inline.expected.html`, 'utf-8');
-    assert.equal(actual, expected);
   });
 
 });

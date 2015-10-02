@@ -90,7 +90,7 @@ describe('Dynamic rules', function() {
     assert.equal(selector, '[name=foo]');
   });
 
-  it('should not include rules without dynamic selectors', function() {
+  it('should not include rules without only id/class/tag/attribute selectors', function() {
     const notDynamic = rules
       .filter(rule => rule.type === 'rule')
       .filter(rule => !/[:[]/.test(rule.selectors) );

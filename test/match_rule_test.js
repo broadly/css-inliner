@@ -17,7 +17,7 @@ describe('Rule matcher', function() {
   const match = matchRule(rule);
 
 
-  describe('for element by tag', function() {
+  describe('for element matched by tag', function() {
 
     const element = {
       type:     ElementType.Tag,
@@ -25,34 +25,36 @@ describe('Rule matcher', function() {
       attribs:  { class: 'pretty' }
     };
 
-    it('should return all properties', function() {
-      const properties = match(element);
-      assert.equal(properties.get(0).name, 'color');
-      assert.equal(properties.get(1).name, 'border');
-    });
+    describe('matched properties', function() {
+      it('should have names', function() {
+        const properties = match(element);
+        assert.equal(properties.get(0).name, 'color');
+        assert.equal(properties.get(1).name, 'border');
+      });
 
-    it('should return all properties with their values', function() {
-      const properties = match(element);
-      assert.equal(properties.get(0).value, 'red');
-      assert.equal(properties.get(1).value, 'none');
-    });
+      it('should have values', function() {
+        const properties = match(element);
+        assert.equal(properties.get(0).value, 'red');
+        assert.equal(properties.get(1).value, 'none');
+      });
 
-    it('should return all properties with their important flag', function() {
-      const properties = match(element);
-      assert.equal(properties.get(0).important, false);
-      assert.equal(properties.get(1).important, true);
-    });
+      it('should have the important flag', function() {
+        const properties = match(element);
+        assert.equal(properties.get(0).important, false);
+        assert.equal(properties.get(1).important, true);
+      });
 
-    it('should return properties with specificity 001', function() {
-      const properties = match(element);
-      for (let property of properties)
-        assert.equal(property.specificity, '001');
+      it('should have specificity of 001', function() {
+        const properties = match(element);
+        for (let property of properties)
+          assert.equal(property.specificity, '001');
+      });
     });
 
   });
 
 
-  describe('for element by id', function() {
+  describe('for element matched by id', function() {
 
     const element = {
       type:     ElementType.Tag,
@@ -60,21 +62,23 @@ describe('Rule matcher', function() {
       attribs:  { id: 'foo' }
     };
 
-    it('should return all properties', function() {
-      const properties = match(element);
-      assert.equal(properties.get(0).name, 'color');
-      assert.equal(properties.get(1).name, 'border');
-    });
+    describe('matched properties', function() {
+      it('should have names', function() {
+        const properties = match(element);
+        assert.equal(properties.get(0).name, 'color');
+        assert.equal(properties.get(1).name, 'border');
+      });
 
-    it('should return properties with specificity 100', function() {
-      const properties = match(element);
-      for (let property of properties)
-        assert.equal(property.specificity, '100');
+      it('should have specificity of 100', function() {
+        const properties = match(element);
+        for (let property of properties)
+          assert.equal(property.specificity, '100');
+      });
     });
   });
 
 
-  describe('for element by tag and id', function() {
+  describe('for element matched by id and separately tag selector', function() {
 
     const element = {
       type:     ElementType.Tag,
@@ -82,42 +86,46 @@ describe('Rule matcher', function() {
       attribs:  { id: 'foo' }
     };
 
-    it('should return all properties', function() {
-      const properties = match(element);
-      assert.equal(properties.get(0).name, 'color');
-      assert.equal(properties.get(1).name, 'border');
-    });
+    describe('matched properties', function() {
+      it('should have names', function() {
+        const properties = match(element);
+        assert.equal(properties.get(0).name, 'color');
+        assert.equal(properties.get(1).name, 'border');
+      });
 
-    it('should return properties with highest specificity (100)', function() {
-      const properties = match(element);
-      for (let property of properties)
-        assert.equal(property.specificity, '100');
+      // We only match the id selector (100) and no the tag selector (001)
+      it('should have specificity of 100', function() {
+        const properties = match(element);
+        for (let property of properties)
+          assert.equal(property.specificity, '100');
+      });
     });
   });
 
 
-  describe('for element with pseudo class', function() {
+  describe('for element only matched with pseudo class', function() {
 
     const element = {
       type: ElementType.Tag,
       name: 'h1'
     };
 
-    it('should return null', function() {
+    it('should return no properties', function() {
       const properties = match(element);
       assert.equal(properties, null);
     });
   });
 
 
-  describe('no matching element', function() {
+  describe('when no elements would match', function() {
 
     const element = { };
 
-    it('should return null', function() {
+    it('should return no properties', function() {
       const properties = match(element);
       assert.equal(properties, null);
     });
   });
 
 });
+

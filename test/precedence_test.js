@@ -3,9 +3,9 @@ const assert     = require('assert');
 const precedence = require('../lib/precedence');
 
 
-describe('Precedence', function() {
+describe('Precedence when', function() {
 
-  describe('only first declaration', function() {
+  describe('only first declaration provided', function() {
     it('should return first declaration', function() {
       const first   = { value: 'first' };
       const second  = null;
@@ -14,7 +14,7 @@ describe('Precedence', function() {
     });
   });
 
-  describe('only second declaration', function() {
+  describe('only second declaration provided', function() {
     it('should return second declaration', function() {
       const first   = null;
       const second  = { value: 'second' };
@@ -68,7 +68,7 @@ describe('Precedence', function() {
     });
   });
 
-  describe('both declarations not important and same specificity', function() {
+  describe('both declarations not important and have same specificity', function() {
     it('should return second declaration', function() {
       const first   = { value: 'first',   important: false, specificity: '123' };
       const second  = { value: 'second',  important: false, specificity: '123' };
@@ -77,7 +77,7 @@ describe('Precedence', function() {
     });
   });
 
-  describe('both declarations important and same specificity', function() {
+  describe('both declarations important and have same specificity', function() {
     it('should return second declaration', function() {
       const first   = { value: 'first',   important: true, specificity: '123' };
       const second  = { value: 'second',  important: true, specificity: '123' };

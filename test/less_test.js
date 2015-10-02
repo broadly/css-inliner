@@ -1,7 +1,6 @@
 'use strict';
-const assert        = require('assert');
-const CSSInliner    = require('../');
-const CSSselect     = require('css-select');
+const assert      = require('assert');
+const CSSInliner  = require('../');
 
 
 describe('Extract Less stylesheets', function() {
@@ -16,7 +15,7 @@ describe('Extract Less stylesheets', function() {
   }
 
 
-  describe('that exists', function() {
+  describe('that exist', function() {
 
     it('should compile Less and inline as CSS', function() {
       const html      = '<link rel="stylesheet" href="/less_test.less"><div><h1>Blue</h1></blue>';

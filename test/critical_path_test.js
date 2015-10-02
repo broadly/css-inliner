@@ -9,9 +9,7 @@ describe('Critical CSS', function() {
   let actual;
 
   before(function() {
-    const inliner = new CSSInliner({
-      directory: __dirname
-    });
+    const inliner = new CSSInliner({ directory: __dirname });
     const source  = File.readFileSync(`${__dirname}/critical.html`, 'utf-8');
     return inliner
       .criticalPathAsync(source)
@@ -20,7 +18,7 @@ describe('Critical CSS', function() {
       });
   });
 
-  it('should produced critical path document', function() {
+  it('should produce HTML with critical path CSS', function() {
     const expected = File.readFileSync(`${__dirname}/critical.expected.html`, 'utf-8');
     assert.equal(actual, expected);
   });
@@ -47,22 +45,22 @@ describe('Critical CSS', function() {
   });
 
   it('should remove other style elements', function() {
-    const regexp = /<style>(.|\n)*?<\/style>/g;
-    let   count = 0;
-    actual.replace(regexp, function(match) {
-      ++count;
-      assert(count === 1, match);
-    });
+    const regexp  = /<style>(.|\n)*?<\/style>/g;
+    const matches = actual.match(regexp);
+    assert(matches.length, 1);
   });
 
-  it('should keep external link reference', function() {
+  it('should keep external link references', function() {
     const regexp = /<link rel="stylesheet" href="(.*)">/g;
-    actual.replace(regexp, function(match, url) {
+    const matches = actual.match(regexp);
+    assert(matches.length, 1);
+    for (let link of matches) {
+      const url = link.match(/href="(.*)"/)[1];
       assert.equal(url, 'http://example.com/style.css');
-    });
+    }
   });
 
-  it('should leave body intact', function() {
+  it('should leave document body intact (no inlining)', function() {
     const regexp = /<body>\s+<h1>Hello World!<\/h1>\s+<\/body>/;
     assert( regexp.test(actual) );
   });

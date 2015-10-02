@@ -13,7 +13,7 @@ describe('Specificity', function() {
       assert.equal(specificity[0], '0');
     });
 
-    it('should count ID as 1xx', function() {
+    it('should count one ID as 1xx', function() {
       const selector    = 'div#foo';
       const specificity = calculateSpecificity(selector);
       assert.equal(specificity[0], '1');
@@ -77,13 +77,13 @@ describe('Specificity', function() {
       assert.equal(specificity[1], '1');
     });
 
-    it('should count three attribute as x3x', function() {
+    it('should count three attributes as x3x', function() {
       const selector    = 'div[foo=foo] div#bar[bar=^bar] [id] b';
       const specificity = calculateSpecificity(selector);
       assert.equal(specificity[1], '3');
     });
 
-    it('should cap class count at 9', function() {
+    it('should cap attribute count at 9', function() {
       const selector    = '.0 .1 .2 .3 .4 .5 .6 .7 .8 .9 .10 .11 .12';
       const specificity = calculateSpecificity(selector);
       assert.equal(specificity[1], '9');
@@ -129,24 +129,24 @@ describe('Specificity', function() {
       assert.equal(specificity.length, 3);
     });
 
-    it('should return 1xx for ID', function() {
+    it('should return 1xx, since ID', function() {
       const selector    = 'div#foo div.bar [qoo] b';
       const specificity = calculateSpecificity(selector);
       assert.equal(specificity[0], '1');
     });
 
-    it('should return x2x for class and attribute', function() {
+    it('should return x2x, since class and attribute', function() {
       const selector    = 'div#foo div.bar [qoo] b';
       const specificity = calculateSpecificity(selector);
       assert.equal(specificity[1], '2');
     });
 
-    it('should return xx3 for tags', function() {
+    it('should return xx3, since three tags', function() {
       const selector    = 'div#foo div.bar [qoo] b';
       const specificity = calculateSpecificity(selector);
       assert.equal(specificity[2], '3');
     });
   });
 
-
 });
+

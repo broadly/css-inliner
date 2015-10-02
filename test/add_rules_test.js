@@ -3,6 +3,7 @@ const addRules  = require('../lib/add_rules');
 const assert    = require('assert');
 const Cache     = require('../lib/cache');
 const Context   = require('../lib/context');
+const domToHTML = require('../lib/dom_to_html');
 const DOMUtils  = require('domutils');
 const parseHTML = require('../lib/parse_html');
 
@@ -20,73 +21,53 @@ h1:hover,  h1:before  {
   background: none ;
 }`;
 
-  let   rules;
-
-  before(function() {
+  function parseAndAddRules(html) {
     const cache = new Cache();
     return cache.compileAsync(css)
       .then(function(result) {
-        rules  = result.rules;
+        const rules   = result.rules;
+        const context = new Context({ html, rules });
+        const parsed  = parseHTML(context);
+        addRules(parsed);
+
+        const withRules = domToHTML(parsed).html;
+        return withRules;
       });
-  });
+  }
 
 
   describe('to document with head', function() {
-
-    const html = '<html><head><title>Hello</title></head><body><h1>Some div</h1></body></html>';
-    let   dom;
-
-    before(function() {
-      const initial = new Context({ html, rules });
-      const parsed  = parseHTML(initial);
-      addRules(parsed);
-      dom = parsed.dom;
-    });
-
-    it('should insert rules to beginning of head', function() {
+    it('should insert rules at beginning of head', function() {
+      const html      = '<html><head><title>Hello</title></head><body><h1>Some div</h1></body></html>';
       const expected  = `<html><head><style>${css}</style><title>Hello</title></head><body><h1>Some div</h1></body></html>`;
-      const html = DOMUtils.getOuterHTML(dom);
-      assert.equal(html, expected);
+      return parseAndAddRules(html)
+        .then(function(actual) {
+          assert.equal(actual, expected);
+        });
     });
   });
 
 
   describe('to document with body and no head', function() {
-
-    const html    = '<body><h1>Som div</h1></body>';
-    let   dom;
-
-    before(function() {
-      const initial = new Context({ html, rules });
-      const parsed  = parseHTML(initial);
-      addRules(parsed);
-      dom = parsed.dom;
-    });
-
-    it('should insert rules to beginning of body', function() {
+    it('should insert rules at beginning of body', function() {
+      const html      = '<body><h1>Som div</h1></body>';
       const expected  = `<body><style>${css}</style><h1>Som div</h1></body>`;
-      const html      = DOMUtils.getOuterHTML(dom);
-      assert.equal(html, expected);
+      return parseAndAddRules(html)
+        .then(function(actual) {
+          assert.equal(actual, expected);
+        });
     });
   });
 
 
-  describe('to document with no body or head', function() {
-
-    const html    = '<div>Some div</div>';
-    let   dom;
-
-    before(function() {
-      const initial = new Context({ html, rules });
-      const parsed  = parseHTML(initial);
-      addRules(parsed);
-      dom = parsed.dom;
-    });
-
-    it('should insert rules to beginning of document', function() {
+  describe('to document with no body and no head', function() {
+    it('should insert rules at beginning of document', function() {
+      const html      = '<div>Some div</div>';
       const expected  = `<style>${css}</style><div>Some div</div>`;
-      const html      = DOMUtils.getOuterHTML(dom);
-      assert.equal(html, expected);
+      return parseAndAddRules(html)
+        .then(function(actual) {
+          assert.equal(actual, expected);
+        });
     });
 
   });
