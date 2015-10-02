@@ -1,0 +1,37 @@
+body, p, td {
+  font-family:      'Helvetica';
+  font-size:        14pt;
+  line-height:      1.5;
+  color:            #444;
+  background-color: #fff;
+  margin-bottom:    0;
+}
+
+
+center {
+  min-width:        300px;
+}
+table.container {
+  width:            auto;
+  max-width:        460px;
+}
+
+/* 10px gutter on each side */
+td.content, td.footer {
+  padding:          0 10px 0 10px;
+}
+/* Banner expands beyond the gutter */
+.banner {
+  margin:           0 -10px 0 -10px;
+  overflow:         hidden;
+}
+
+/* Space out page content from footer. */
+td.content {
+  padding-bottom:   20px;
+}
+td.footer {
+  padding-top:      19px;
+  border-top:       1px solid #ccc;
+}
+
