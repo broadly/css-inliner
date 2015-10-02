@@ -45,19 +45,19 @@ describe('Critical CSS', function() {
   });
 
   it('should remove other style elements', function() {
-    const regexp = /<style>(.|\n)*?<\/style>/g;
-    let   count = 0;
-    actual.replace(regexp, function(match) {
-      ++count;
-      assert(count === 1, match);
-    });
+    const regexp  = /<style>(.|\n)*?<\/style>/g;
+    const matches = actual.match(regexp);
+    assert(matches.length, 1);
   });
 
   it('should keep external link references', function() {
     const regexp = /<link rel="stylesheet" href="(.*)">/g;
-    actual.replace(regexp, function(match, url) {
+    const matches = actual.match(regexp);
+    assert(matches.length, 1);
+    for (let link of matches) {
+      const url = link.match(/href="(.*)"/)[1];
       assert.equal(url, 'http://example.com/style.css');
-    });
+    }
   });
 
   it('should leave document body intact (no inlining)', function() {
