@@ -68,7 +68,7 @@ are always discarded.
 Rules that cannot be applied, are kept as is, and added back to the document
 inside a new `style` elements.  These become accessible to browsers or email
 clients that refuse to load external stylesheets, but will still process `style`
-elements included in the document (e.g. GMail).
+elements included in the document (e.g. Gmail).
 
 Rules that cannot be inlined include pseudo selectors such as `:hover` and
 `::after`, as well as all media queries such as `@media screen`.  These can only
@@ -80,7 +80,7 @@ included in the document with another selector.
 
 
 
-## Working with Less/SASS/Stylus/etc
+## Working with preprocessors (Less, Sass, Stylus, etc)
 
 If you're working with a language that compiles to CSS, you need to use the
 `precompile` option.
