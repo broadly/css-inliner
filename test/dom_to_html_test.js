@@ -2,6 +2,7 @@
 const assert    = require('assert');
 const Context   = require('../lib/context');
 const domToHTML = require('../lib/dom_to_html');
+const File      = require('fs');
 const parseHTML = require('../lib/parse_html');
 
 
@@ -144,7 +145,7 @@ describe('DOM to HTML', function() {
 
   describe('a declaration', function() {
     it('should produce itself', function() {
-      const html      = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html></html>';
+      const html      = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><body>Hi</body></html>';
       const expected  = html;
       const actual    = roundTrip(html);
       assert.equal(actual, expected);
@@ -179,6 +180,15 @@ describe('DOM to HTML', function() {
       const actual    = roundTrip(html);
       assert.equal(actual, expected);
     });
+  });
+
+
+  describe('an XHTML document', function() {
+    const xhtml     = File.readFileSync(`${__dirname}/xhtml.html`, 'utf8');
+    const expected  = xhtml;
+    const actual    = roundTrip(xhtml);
+    console.log(actual)
+    assert.equal(actual, expected);
   });
 
 });
