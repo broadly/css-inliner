@@ -16,7 +16,8 @@ describe('Extract stylesheets', function() {
   // html -> { dom, rules }
   function parseAndExtract(html) {
     const inliner = new CSSInliner({ directory: __dirname });
-    return inliner._newContextAsync(html)
+    const context = inliner.newContext(html);
+    return Promise.resolve(context)
       .then(parseHTML)
       .then(extractRules);
   }

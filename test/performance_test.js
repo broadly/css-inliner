@@ -41,4 +41,48 @@ describe('Performance', function() {
       });
   });
 
+
+  describe('yielding', function() {
+
+    // Counts how many times we yield to allow other CPU/IO work to occur.
+    // Returns an object with the count (ticks) and a stop method.
+    function countTicks() {
+      const counter = {
+        ticks:    0,
+        running:  true,
+        stop() {
+          counter.running = false;
+        }
+      };
+
+      function countTick() {
+        if (counter.running) {
+          ++counter.ticks;
+          setImmediate(countTick);
+        }
+      }
+      setImmediate(countTick);
+
+      return counter;
+    }
+
+
+    it('should yield after every step', function() {
+      const html      = '<style>@media print {}</style><h1>{{header}}</h1>';
+      const directory = __dirname;
+      const template  = CSSInliner.handlebars;
+      const inliner   = new CSSInliner({ directory, template });
+
+      const counter   = countTicks();
+
+      const expected = 8;
+      return inliner.inlineCSSAsync(html)
+        .then(function() {
+          counter.stop();
+          assert.equal(counter.ticks, expected);
+        });
+    });
+
+  });
+
 });
