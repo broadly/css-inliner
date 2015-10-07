@@ -73,24 +73,14 @@ describe('Dynamic rules', function() {
     assert.equal(selector, 'h1:hover');
   });
 
-  it('should include rules with attribute selectors', function() {
+  it('should not include rules with attribute selectors', function() {
     const attribute = rules
       .filter(rule => rule.type === 'rule')
       .filter(rule => /\[/.test(rule.selectors) );
-    assert.equal(attribute.size, 1);
-    const declarations = attribute.get(0).nodes;
-    assert.equal(declarations, 'color: green');
+    assert.equal(attribute.size, 0);
   });
 
-  it('should include only the attribute selectors', function() {
-    const attribute = rules
-      .filter(rule => rule.type === 'rule')
-      .filter(rule => /\[/.test(rule.selectors) );
-    const selector = attribute.get(0).selector;
-    assert.equal(selector, '[name=foo]');
-  });
-
-  it('should not include rules without only id/class/tag/attribute selectors', function() {
+  it('should not include rules without only id/class/tag selectors', function() {
     const notDynamic = rules
       .filter(rule => rule.type === 'rule')
       .filter(rule => !/[:[]/.test(rule.selectors) );
