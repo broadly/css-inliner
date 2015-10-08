@@ -25,10 +25,8 @@ to keep it around, but it is useful to speed up processing.
 
 You configure the inliner with the following options:
 
-`directory`  - The base directory from which stylesheets are loaded.
-
-`loadAsync`  - A function that reads a stylesheet reference (path or URL) into a
-Buffer or String.
+`directory` - The base directory from which local stylesheets are loaded. Only
+files in this directory or its sub-directories are accessible.
 
 `plugins`    - Array of [PostCSS plugins][postcss-plugins] to use while processing
 stylesheets.
@@ -39,18 +37,9 @@ preprocessors section][preprocessors-section].
 `template`   - A function that can extract tags from a templating language. See
 the [templates section][templates-section].
 
-If the source document links to any external stylesheet with a relative URL
-(path only), then the inliner will attempt to resolve this stylesheet using the
-supplied `loadAsync` function. This function can return a promise.
-
-The most common configuration is for external stylesheets to exist in a known
-location in the file system, and this can be set using the `directory` option
-(instead, not in addition to, the `loadAsync` option).  Only files in that
-directory or sub-directory are accessible.
-
-If you don't specify either option, CSSInliner will not be able to resolve
-external stylesheets.  However, it can still process `style` elements appearing
-in the document.
+`loadAsync` - A function that reads a stylesheet reference (path or URL) into
+a Buffer or string. Recommended only when `directory` and `precompile` are not
+enough.
 
 
 ## How It Works
