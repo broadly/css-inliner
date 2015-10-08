@@ -2,6 +2,7 @@
 const assert        = require('assert');
 const Cache         = require('../lib/cache');
 const Context       = require('../lib/context');
+const Immutable     = require('immutable');
 const selectDynamic = require('../lib/select_dynamic');
 
 
@@ -62,7 +63,7 @@ describe('Dynamic rules', function() {
       .filter(rule => /:/.test(rule.selectors) );
     assert.equal(pseudo.size, 1);
     const declarations = pseudo.get(0).nodes;
-    assert.equal(declarations, 'color: red');
+    assert.equal(declarations, 'color: red !important');
   });
 
   it('should include only the pseudo selector', function() {
@@ -85,6 +86,21 @@ describe('Dynamic rules', function() {
       .filter(rule => rule.type === 'rule')
       .filter(rule => !/[:[]/.test(rule.selectors) );
     assert.equal(notDynamic.size, 0);
+  });
+
+  it('should make all dynamic rules important', function() {
+    function accum(rule) {
+      if (rule.type === 'atrule') {
+        if (rule.name !== 'font-face')
+          return Immutable.Seq(rule.nodes).flatMap(accum);
+      }
+      else
+        return rule.nodes;
+    }
+
+    const allDecls = rules.flatMap(accum);
+    assert.equal(allDecls.size, 3);
+    assert(allDecls.every(rule => rule.important));
   });
 
 });
