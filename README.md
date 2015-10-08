@@ -1,12 +1,16 @@
+# CSSInliner
 
-Example:
+A simple and modern CSS inliner. Optionally supports CSS preprocessors
+(e.g. Less) and templating languages (e.g. Handlebars).
+
+# Usage
 
 ```js
 const inliner = new CSSInliner({
   directory: 'stylesheets'
 });
 
-inliner.inlineAsync(html)
+inliner.inlineCSSAsync(html)
   .then(function(result) {
     console.log(result.inlined);
   });
@@ -21,23 +25,30 @@ to keep it around, but it is useful to speed up processing.
 
 You configure the inliner with the following options:
 
-`directory` - This is the base directory from which stylesheets are loaded.
+`directory`  - The base directory from which stylesheets are loaded.
 
-`plugins`   - Array of PostCSS plugins.
+`loadAsync`  - A function that reads a stylesheet reference (path or URL) into a
+Buffer or String.
 
-`resolve`   - This is a function that resolves a stylesheet reference (path or
-URL) into the filename of the stylesheet to load.
+`plugins`    - Array of [PostCSS plugins][postcss-plugins] to use while processing
+stylesheets.
 
-If the source document links to any external stylesheet with with a relative URL
+`precompile` - A function that precompiles a stylesheet into CSS. See [the
+preprocessors section][preprocessors-section].
+
+`template`   - A function that can extract tags from a templating language. See
+the [templates section][templates-section].
+
+If the source document links to any external stylesheet with a relative URL
 (path only), then the inliner will attempt to resolve this stylesheet using the
-supplied `resolve` function.
+supplied `loadAsync` function. This function can return a promise.
 
 The most common configuration is for external stylesheets to exist in a known
 location in the file system, and this can be set using the `directory` option
-(instead, not in addition to, the `resolve` options).  Only files in that
+(instead, not in addition to, the `loadAsync` option).  Only files in that
 directory or sub-directory are accessible.
 
-If you don't specify either options, inliner will not be able to resolve
+If you don't specify either option, CSSInliner will not be able to resolve
 external stylesheets.  However, it can still process `style` elements appearing
 in the document.
 
@@ -46,12 +57,12 @@ in the document.
 
 The inliner extracts any `style` elements appearing in the document, with all
 their rules.  It also extracts any external stylesheets that use relative URLs.
-Both stylesheets are processed using PostCSS and any plugins you opt to use, and
+All stylesheets are processed using PostCSS and any plugins you opt to use, and
 cached in memory.
 
-The `style` element and `link` element to known stylesheet are then removed from
-the document.  These rules will be inlined or added back into the document
-later.
+The `style` elements and `link` elements to known stylesheet are then removed
+from the document.  Their rules will either be inlined or added back into the
+document later.
 
 External stylesheets that reference absolute URLs (anything with a hostname,
 such as `//example.com/`) are retained in the document.  These are expected to
@@ -61,23 +72,17 @@ Styles are processed in document order, that is, the order in which the `style`
 or `link` elements appear in the document, such that the early rules take
 precedence (for the same specificity).
 
-Rules that can be applied to the `style` attribute of an element (inlined), are
-applied to any matching element found in the document, if there is one.  They
-are always discarded.
-
-Rules that cannot be applied, are kept as is, and added back to the document
-inside a new `style` elements.  These become accessible to browsers or email
-clients that refuse to load external stylesheets, but will still process `style`
-elements included in the document (e.g. Gmail).
+Rules that can be applied to the `style` attribute of an element (inlined) are
+applied to any matching element found in the document, if there is one.  These
+are never added back into a `style` element in the document.
 
 Rules that cannot be inlined include pseudo selectors such as `:hover` and
 `::after`, as well as all media queries such as `@media screen`.  These can only
-be applied to a live document when rendered by a browser.
+be applied to a live document when rendered by a browser or email client.
+Thus they are added back to the document inside a `style` element.
 
 If a rule has multiple selectors, it may be inlined using one selector, and
 included in the document with another selector.
-
-
 
 
 ## Working with preprocessors (Less, Sass, Stylus, etc)
@@ -85,7 +90,8 @@ included in the document with another selector.
 If you're working with a language that compiles to CSS, you need to use the
 `precompile` option.
 
-A precompiled for Less is included by default, and you can use it like this:
+A precompile function for Less is included by default, and you can use it like
+this:
 
 ```js
 const precompile  = CSSInliner.less;
@@ -105,16 +111,16 @@ or a promise that resolves to a string or Buffer.
 
 ## Working with templates (Handlebars, etc)
 
-Inlining requires parsing the HTML document, and when there are non-HTML tags in
-the document, they are often parsed incorrectly.  Many templating languages use
-non-HTML tags.
+Inlining requires parsing the document as HTML, and when there are non-HTML
+tags in the document, they are often parsed incorrectly.  Many templating
+languages use non-HTML tags.
 
 Use the `template` option with an appropriate template parser.  For example,
-when working with Handlebar templates:
+when working with Handlebars templates:
 
 ```js
-const template = CSSInliner.handlebars;
-const inliner  = new CSSInliner({ template });
+const template  = CSSInliner.handlebars;
+const inliner   = new CSSInliner({ template });
 ```
 
 (Handlebars is an optional dependency, so you need to add it in your
@@ -123,18 +129,35 @@ const inliner  = new CSSInliner({ template });
 The template handler is a function that will be called with the source template,
 and must return an array of all template tags found there.
 
-These tags are then replaced with markers, before parsing the HTML and inlining,
-and are restored before resolving to the final HTML.
+These tags are then replaced with HTML-compatible markers before parsing and
+inlining, and are restored before resolving to the final document.
+
+Note: you shouldn't use the templating language to define a class inside a
+`class` attribute. CSSInliner doesn't run the template - it only inlines styles
+as if the template tags weren't there. If you need to define an element's class
+based on a condition:
+
+```html
+<!-- Don't do this -->
+<div class="{{ active_or_inactive }}"></div>
+
+<!-- Do this instead -->
+{{#if active}}
+  <div class="active"></div>
+{{else}}
+  <div class="inactive"></div>
+{{/if}}
+```
 
 
 ## Watching for warnings
 
-The inliner may report warnings while processing CSS or HTML documents, by
-emitting a warning event.
+The inliner may report warnings while processing CSS or HTML documents by
+emitting a `warning` event.
 
 You can use an event handler to catch and log the warning.  You can also halt
 processing by throwing an error from your event handler.  If there are no event
-handlers, it will log the warning to stderr.
+handlers, warnings will be logged to stderr.
 
 ```js
 const inliner = new CSSInliner(options);
@@ -142,7 +165,6 @@ inliner.on('warning', function(warning) {
   console.log('So this happened:', warning);
 });
 ```
-
 
 
 ## References
@@ -153,3 +175,7 @@ inliner.on('warning', function(warning) {
 
 [PostCSS Selector Parser API](https://github.com/postcss/postcss-selector-parser/blob/master/API.md)
 
+
+[postcss-plugins]:       https://github.com/postcss/postcss#plugins
+[preprocessors-section]: #working-with-preprocessors-less-sass-stylus-etc
+[templates-section]:     #working-with-templates-handlebars-etc
