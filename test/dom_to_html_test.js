@@ -187,7 +187,6 @@ describe('DOM to HTML', function() {
     const xhtml     = File.readFileSync(`${__dirname}/xhtml.html`, 'utf8');
     const expected  = xhtml;
     const actual    = roundTrip(xhtml);
-    console.log(actual)
     assert.equal(actual, expected);
   });
 
