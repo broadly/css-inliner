@@ -192,5 +192,25 @@ describe('DOM to HTML', function() {
     });
   });
 
+  describe('XHTML mode', function() {
+    describe('a regular element with no content', function() {
+      it('should not use the </> shorthand', function() {
+        const html      = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><title></title></html>';
+        const expected  = html;
+        const actual    = roundTrip(html);
+        assert.equal(actual, expected);
+      });
+    });
+
+    describe('an empty element with no content', function() {
+      it('should use the </> shorthand', function() {
+        const html      = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><br/></html>';
+        const expected  = html;
+        const actual    = roundTrip(html);
+        assert.equal(actual, expected);
+      });
+    });
+  });
+
 });
 
