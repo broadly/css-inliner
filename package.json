@@ -30,12 +30,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/broadly/css-linter.git"
+    "url": "git+https://github.com/broadly/css-inliner.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/broadly/css-linter/issues"
+    "url": "https://github.com/broadly/css-inliner/issues"
   },
-  "homepage": "https://github.com/broadly/css-linter#readme"
+  "homepage": "https://github.com/broadly/css-inliner#readme"
 }
