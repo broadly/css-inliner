@@ -184,10 +184,12 @@ describe('DOM to HTML', function() {
 
 
   describe('an XHTML document', function() {
-    const xhtml     = File.readFileSync(`${__dirname}/xhtml.html`, 'utf8');
-    const expected  = xhtml;
-    const actual    = roundTrip(xhtml);
-    assert.equal(actual, expected);
+    it('should produce itself', function() {
+      const xhtml     = File.readFileSync(`${__dirname}/xhtml.html`, 'utf8');
+      const expected  = xhtml;
+      const actual    = roundTrip(xhtml);
+      assert.equal(actual, expected);
+    });
   });
 
 });
