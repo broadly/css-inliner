@@ -4,22 +4,12 @@ const assert    = require('assert');
 const Cache     = require('../lib/cache');
 const Context   = require('../lib/context');
 const domToHTML = require('../lib/dom_to_html');
-const DOMUtils  = require('domutils');
 const parseHTML = require('../lib/parse_html');
 
 
 describe('Add rules', function() {
 
-  const css =
-`@media print {
-  .footer {
-    display: none;
-  }
-}
-h1:hover,  h1:before  {
-  color : red ;
-  background: none ;
-}`;
+  const css = `@media print{.footer{display:none}}h1:hover,h1:before{color:red;background:none}`;
 
   function parseAndAddRules(html) {
     const cache = new Cache();
