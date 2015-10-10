@@ -3,6 +3,13 @@
 A simple and modern CSS inliner. Optionally supports CSS preprocessors
 (e.g. Less) and templating languages (e.g. Handlebars).
 
+[![NPM](https://img.shields.io/npm/v/css-inliner.svg?style=flat-square&label=latest)](https://www.npmjs.com/package/css-inliner)
+[![Changelog](https://img.shields.io/badge/see-CHANGELOG-red.svg?style=flat-square)](https://github.com/broadly/css-inliner/blob/master/CHANGELOG.md)
+<img width="12" src="data:image/gif;base64,R0lGODlhAQABAPAAAP">
+[![Travis.ci](https://img.shields.io/travis/broadly/css-inliner.svg?style=flat-square)](https://travis-ci.org/broadly/css-inliner)
+<img width="12" src="data:image/gif;base64,R0lGODlhAQABAPAAAP">
+
+
 # Usage
 
 ```js
