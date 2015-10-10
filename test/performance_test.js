@@ -36,7 +36,7 @@ describe('Performance', function() {
       .then(function(hrtime) {
         const elapsed  = (hrtime[0] * 1000) + (hrtime[1] / 1000000);
         const per      = elapsed / count;
-        assert(per < 5, `Expected to complete an iteration in < ~5ms, got ${per}ms`);
+        assert(per < 10, `Expected to complete an iteration in < ~10ms, got ${per}ms`);
       });
   });
 
