@@ -125,7 +125,7 @@ describe('DOM to HTML', function() {
     describe('(XML in HTML, empty)', function() {
       it('should produce self-closing tag', function() {
         const html      = '<svg autofocus></svg>';
-        const expected  = '<svg autofocus/>';
+        const expected  = '<svg autofocus />';
         const actual    = roundTrip(html);
         assert.equal(actual, expected);
       });
@@ -133,7 +133,7 @@ describe('DOM to HTML', function() {
 
     describe('(XML in HTML)', function() {
       it('should produce element and contents', function() {
-        const html      = '<svg><rect/><path/></svg>';
+        const html      = '<svg><rect /><path /></svg>';
         const expected  = html;
         const actual    = roundTrip(html);
         assert.equal(actual, expected);
@@ -184,10 +184,32 @@ describe('DOM to HTML', function() {
 
 
   describe('an XHTML document', function() {
-    const xhtml     = File.readFileSync(`${__dirname}/xhtml.html`, 'utf8');
-    const expected  = xhtml;
-    const actual    = roundTrip(xhtml);
-    assert.equal(actual, expected);
+    it('should produce itself', function() {
+      const xhtml     = File.readFileSync(`${__dirname}/xhtml.html`, 'utf8');
+      const expected  = xhtml;
+      const actual    = roundTrip(xhtml);
+      assert.equal(actual, expected);
+    });
+  });
+
+  describe('XHTML mode', function() {
+    describe('a regular element with no content', function() {
+      it('should not use the </> shorthand', function() {
+        const html      = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><title></title></html>';
+        const expected  = html;
+        const actual    = roundTrip(html);
+        assert.equal(actual, expected);
+      });
+    });
+
+    describe('an empty element with no content', function() {
+      it('should use the </> shorthand', function() {
+        const html      = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><br /></html>';
+        const expected  = html;
+        const actual    = roundTrip(html);
+        assert.equal(actual, expected);
+      });
+    });
   });
 
 });
