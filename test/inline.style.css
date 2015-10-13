@@ -22,3 +22,9 @@ p:hover {
     font-weight: bolder;
   }
 }
+
+/* Make sure nested selectors below an attribute selector don't throw.
+ * This shouldn't match any element in the DOM. */
+div[itemscope] p {
+  color: black;
+}
