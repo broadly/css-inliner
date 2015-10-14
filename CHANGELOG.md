@@ -1,3 +1,12 @@
+(Unreleased)
+============
+
+- Fixed an issue with ordering of declarations inside `style` attributes.
+
+- Fixed an issue with nesting and attribute selectors when there's no matching
+  element.
+
+
 1.1.0 - 2015-10-11
 ==================
 
