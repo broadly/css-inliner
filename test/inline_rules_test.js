@@ -313,6 +313,90 @@ describe('Apply rules inline', function() {
 
   });
 
+  describe('with many declarations', function() {
+
+    const css   = `
+      a {
+        font-family:      sans-serif;
+        font-size:        14px;
+        line-height:      1;
+        margin:           0;
+        padding:          0;
+      }
+      div.button a {
+        background:       #2ba6cb;
+      }
+      .buttons div.button a {
+        background-color: #337ab7;
+        border-color:     #2e6da4;
+        color:            #fff;
+      }
+    `;
+
+    let dom;
+
+    describe('an element with no style attribute', function() {
+      const html  = `
+      <html>
+        <body>
+          <div class="buttons">
+            <div class="button">
+              <a>Click me</a>
+            </div>
+          </div>
+        </body>
+      </html>
+      `;
+
+      before(function() {
+        return applyCSS(html, css)
+          .then(function(result) {
+            dom = result;
+          });
+      });
+
+      it('should keep declarations in order', function() {
+        const link            = CSSselect.selectOne('a', dom);
+        const background      = link.attribs.style.indexOf('background:');
+        const backgroundColor = link.attribs.style.indexOf('background-color:');
+
+        assert(background      > -1);
+        assert(backgroundColor > -1);
+        assert(backgroundColor > background);
+      });
+    });
+
+    describe('an element with a style attribute', function() {
+      const html  = `
+      <html>
+        <body>
+          <div class="buttons">
+            <div class="button">
+              <a style='display: block'>Click me</a>
+            </div>
+          </div>
+        </body>
+      </html>
+      `;
+
+      before(function() {
+        return applyCSS(html, css)
+          .then(function(result) {
+            dom = result;
+          });
+      });
+
+      it('should keep declarations in order', function() {
+        const link            = CSSselect.selectOne('a', dom);
+        const background      = link.attribs.style.indexOf('background:');
+        const backgroundColor = link.attribs.style.indexOf('background-color:');
+
+        assert(background      > -1);
+        assert(backgroundColor > -1);
+        assert(backgroundColor > background);
+      });
+    });
+  });
 
 });
 
