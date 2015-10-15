@@ -1,5 +1,5 @@
-(Unreleased)
-============
+1.1.1 - 2015-10-15
+==================
 
 - Fixed an issue with ordering of declarations inside `style` attributes.
 
