@@ -4,7 +4,7 @@
   "description": "",
   "main": "lib/index.js",
   "engines": {
-    "node": "^4.0.0"
+    "node": ">=4.0.0"
   },
   "dependencies": {
     "@broadly/htmlparser2": "^3.9.0",
