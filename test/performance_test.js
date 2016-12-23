@@ -10,7 +10,7 @@ describe('Performance', function() {
     const count = 1000;
     this.timeout(50000);
 
-    const html      = File.readFileSync(`${__dirname}/email.html`, 'utf8');
+    const html      = File.readFileSync(`${__dirname}/email.html`);
     const directory = __dirname;
     const template  = CSSInliner.handlebars;
     const inliner   = new CSSInliner({ directory, template });
