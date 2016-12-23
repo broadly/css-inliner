@@ -1,10 +1,15 @@
+1.1.3 - 2016-12-23
+==================
+
+- Upgraded dependencies and relaxed Node version requirement.
+
+
 1.1.2 - 2015-10-20
 ==================
 
 - Fixed failing on at-rules that are no media queries.
 
 - You can now inline Buffer.
-
 
 
 1.1.1 - 2015-10-15
