@@ -1,3 +1,11 @@
+2.0.0 - 2020-09-16
+==================
+
+- HTML comments are retained now.
+
+- Upgraded dependencies and required Node version.
+
+
 1.1.3 - 2016-12-23
 ==================
 
