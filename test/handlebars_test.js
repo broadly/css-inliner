@@ -184,7 +184,7 @@ describe('Handlebar templates', function() {
     });
 
     it('should deal with nested template tags', function() {
-      const template  = '{{foo}}<!--skip-->{{bar tag="{{foo}}"}}';
+      const template  = '{{foo}}{{bar tag="{{foo}}"}}';
       const expected  = '{{foo}}{{bar tag="{{foo}}"}}';
       return inliner
         .inlineCSSAsync(template)
