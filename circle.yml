@@ -1,6 +1,0 @@
-machine:
-  environment:
-    NODE_VERSION: $(grep '"node":' */package.json | grep -o '[0-9]\.[0-9]*\.[0-9]*')
-  node:
-    version: $NODE_VERSION
-
